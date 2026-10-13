@@ -1,0 +1,45 @@
+:root{
+  color-scheme:light;
+  --bg:#F4F3F8; --surface:#FFFFFF; --surface-2:#FAF9FD; --line:#E7E5EF; --line-strong:#D3D0E0;
+  --ink:#2A2840; --ink-2:#5E5B78; --ink-3:#8A87A1;
+  --accent:#5435C0; --accent-ink:#FFFFFF; --accent-soft:#ECE8FB; --accent-soft-ink:#43299F; --accent-line:#D6CDF6;
+  --good-bg:#E5F5EB; --good-ink:#1D6A3A; --good-line:#BDE3CB; --good:#2fa365;
+  --warn-bg:#FCF4DD; --warn-ink:#7A5912; --warn-line:#EDD79A; --warn:#d9a21b;
+  --bad-bg:#FBEAED; --bad-ink:#9A2F43; --bad-line:#F0C2CB; --bad:#C94560;
+  --shadow:0 1px 2px rgba(42,40,64,.04),0 4px 16px rgba(42,40,64,.04);
+  --pop:0 12px 40px rgba(30,26,60,.18);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#13121B; --surface:#1C1B27; --surface-2:#211F2F; --line:#2D2B3E; --line-strong:#413F57;
+    --ink:#ECEAF6; --ink-2:#AEABC6; --ink-3:#7F7C99;
+    --accent:#9079F2; --accent-ink:#14111F; --accent-soft:#2A2450; --accent-soft-ink:#D2C8FF; --accent-line:#463C86;
+    --good-bg:#16301F; --good-ink:#8FDDAA; --good-line:#27573A;
+    --warn-bg:#35290F; --warn-ink:#EBCB7A; --warn-line:#5E4A18;
+    --bad-bg:#3A1821; --bad-ink:#F2A3B2; --bad-line:#69303D;
+    --shadow:0 1px 2px rgba(0,0,0,.3); --pop:0 12px 40px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#13121B; --surface:#1C1B27; --surface-2:#211F2F; --line:#2D2B3E; --line-strong:#413F57;
+  --ink:#ECEAF6; --ink-2:#AEABC6; --ink-3:#7F7C99;
+  --accent:#9079F2; --accent-ink:#14111F; --accent-soft:#2A2450; --accent-soft-ink:#D2C8FF; --accent-line:#463C86;
+  --good-bg:#16301F; --good-ink:#8FDDAA; --good-line:#27573A;
+  --warn-bg:#35290F; --warn-ink:#EBCB7A; --warn-line:#5E4A18;
+  --bad-bg:#3A1821; --bad-ink:#F2A3B2; --bad-line:#69303D;
+  --shadow:0 1px 2px rgba(0,0,0,.3); --pop:0 12px 40px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg.i{flex:none;display:block}
+h1,h2,h3,h4,p{margin:0}

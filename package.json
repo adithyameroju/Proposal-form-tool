@@ -1,0 +1,12 @@
+{
+  "name": "coverline-ops-prototype",
+  "version": "1.0.0",
+  "description": "Clickable prototype of the policy-ingestion console (V1 current flow, V2 full journey). Plain HTML, CSS and JavaScript. No dependencies.",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  }
+}

@@ -1,0 +1,46 @@
+/* ---------- common ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.card-h{padding:18px 22px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.card-h h2,.card-h h3{font-size:17px;font-weight:650;letter-spacing:-.01em}
+.card-h p{margin-top:2px;color:var(--ink-3);font-size:14px}
+.card-b{padding:0 22px 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);font-weight:600;font-size:14px;color:var(--ink-2);white-space:nowrap;transition:background .12s,border-color .12s}
+.btn:hover:not(:disabled){background:var(--surface-2);border-color:var(--ink-3);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-p{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn-p:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:var(--accent-ink);filter:brightness(1.1)}
+.btn-d{background:var(--bad-ink);border-color:var(--bad-ink);color:#fff}
+.btn-d:hover:not(:disabled){background:var(--bad-ink);border-color:var(--bad-ink);color:#fff;filter:brightness(1.1)}
+.btn-t{border-color:transparent;background:transparent}
+.btn-ok{border-color:var(--good-line);background:var(--good-bg);color:var(--good-ink)}
+.btn-ok:hover:not(:disabled){background:var(--good-bg);border-color:var(--good);color:var(--good-ink)}
+.btn-sm{height:34px;padding:0 12px;font-size:13.5px;border-radius:9px}
+.btn-lg{height:46px;padding:0 22px;font-size:15px}
+.btn-block{width:100%}
+.link{background:none;border:0;padding:0;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;font-size:inherit}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:3px 12px;border-radius:999px;font-weight:500;font-size:13px;border:1px solid;white-space:nowrap}
+.pill b{font-weight:700}
+.pill .d{width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-good{background:var(--good-bg);color:var(--good-ink);border-color:var(--good-line)}
+.p-warn{background:var(--warn-bg);color:var(--warn-ink);border-color:var(--warn-line)}
+.p-bad{background:var(--bad-bg);color:var(--bad-ink);border-color:var(--bad-line)}
+.p-info{background:var(--accent-soft);color:var(--accent-soft-ink);border-color:var(--accent-line)}
+.p-none{background:var(--surface-2);color:var(--ink-2);border-color:var(--line-strong)}
+.tag{display:inline-block;padding:6px 12px;border-radius:7px;background:var(--accent-soft);color:var(--accent-soft-ink);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase}
+.tag.sm{padding:3px 8px;font-size:11px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);font-size:13px;color:var(--ink-2)}
+.chip svg{color:var(--ink-3)}
+.chip.w{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}.chip.w svg{color:inherit}
+.chip.g{background:var(--good-bg);border-color:var(--good-line);color:var(--good-ink)}.chip.g svg{color:inherit}
+.chip.b{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-ink)}.chip.b svg{color:inherit}
+.chip.a{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-soft-ink)}.chip.a svg{color:inherit}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;word-break:break-word}
+.alert{display:flex;gap:12px;align-items:flex-start;border-radius:12px;padding:12px 16px;margin-bottom:16px;border:1px solid;font-size:14.5px}
+.alert svg{margin-top:2px}
+.alert .ax{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;padding-left:12px}
+.a-info{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-soft-ink)}
+.a-ok{background:var(--good-bg);border-color:var(--good-line);color:var(--good-ink)}
+.a-warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
+.a-bad{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-ink)}
+.note{font-size:13px;color:var(--ink-3)}
+.narrow{max-width:none}
