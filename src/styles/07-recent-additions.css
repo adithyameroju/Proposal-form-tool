@@ -523,3 +523,9 @@ body[data-dens="comfortable"] .xin{height:36px}
 .kbt td{padding:6px 4px;border-bottom:1px solid var(--line)}
 .kbt td:first-child{white-space:nowrap;width:130px}
 .locklist{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;display:grid;gap:4px}
+
+/* uploaded file rows: stack the master-policy picker under the name when the card is narrow */
+@media (max-width:1400px){.ifile .ifh{grid-template-columns:auto minmax(0,1fr) auto}.ifile .ifm{grid-column:1/-1;grid-row:2}}
+.ifile .fn{overflow-wrap:anywhere}
+.fnote{display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.fnote svg{flex:none;margin-top:2px}

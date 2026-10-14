@@ -25,9 +25,11 @@ function wAttachFile(f){
  if(I.files.some(x=>x.name===f.name)){I.err=`${f.name} is already attached.`;return false}
  const mb=parseFloat(f.size);
  if(mb>25){I.err=`${f.name} is ${f.size}. Files must be 25 MB or smaller. Compress the PDF or split it, then try again.`;return false}
- if(!(mb>0)&&!/0\.0 MB/.test('')&&String(f.size).startsWith('0.0')){I.err=`${f.name} is empty. Choose a different file.`;return false}
- if(/password|protected|encrypted/i.test(f.name)){I.err=`${f.name} is password-protected, so it can\u2019t be read. Remove the password and upload it again.`;return false}
- const row={key:'f'+rid(),name:f.name,size:f.size,mode:f.mode||(/corrupt|broken|fail/i.test(f.name)?'fail':/scan/i.test(f.name)?'partial':'clean'),hashing:true,policyId:'',match:null,asRev:false,partner:wDetectPartner(f.name),blob:f.blob||null};
+ let warn=null;
+ if(String(f.size).startsWith('0.0'))warn={t:'empty',m:'This file looks empty, so there is nothing to read.'};
+ else if(/password|protected|encrypted/i.test(f.name))warn={t:'locked',m:'This file is password-protected, so its text can\u2019t be read.'};
+ else if(/corrupt|broken|fail|unreadable/i.test(f.name))warn={t:'corrupt',m:'This file looks damaged or unreadable.'};
+ const row={key:'f'+rid(),name:f.name,size:f.size,mode:warn?'fail':(f.mode||(/corrupt|broken|fail/i.test(f.name)?'fail':/scan/i.test(f.name)?'partial':'clean')),hashing:true,policyId:'',match:null,asRev:false,partner:wDetectPartner(f.name),blob:f.blob||null,warn};
  const pm=W.masters.filter(m=>m.partnerId===S.co.id);if(pm.length===1)row.policyId=pm[0].id;
  I.files.push(row);I.err='';
  setTimeout(()=>{const r=W.intake&&W.intake.files.find(x=>x.key===row.key);if(!r)return;r.hashing=false;r.match=wMatch(r);
@@ -37,6 +39,7 @@ function wAttachFile(f){
 function wFileNote(f){
  if(f.hashing)return `<div class="fnote">${ic('refresh',12)}Checking contents against existing proposals…</div>`;
  const out=[];
+ if(f.warn)out.push(`<div class="fnote bad">${ic('alert',13)}<span><b>Heads up: this document isn\u2019t readable.</b> ${f.warn.m} You can continue as is. Parsing will likely stop or find no terms, and you can then replace the file and retry.</span></div>`);
  if(f.partner&&f.partner!==S.co.id)out.push(`<div class="fnote bad">${ic('alert',13)}Looks like a ${esc(WPARTNERS[f.partner]||f.partner)} file. Every file in a batch must belong to ${esc(S.co.name)}.</div>`);
  if(f.match){
   const m=f.match,blk=wRevBlock(m.p);

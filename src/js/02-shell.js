@@ -8,7 +8,7 @@ function renderSb(){
  const inProp=['proposals','proposal','packages','partners','activity','new'].includes(v);
  const cnt=VER!=='v1'?wProps().length:S.props.length;
  sb.innerHTML=`
-  <div class="brand"><button class="tg" data-tip="${S.col?'Expand sidebar':'Collapse sidebar'}" data-act="toggleCol" aria-label="${S.col?'Expand':'Collapse'} sidebar" aria-pressed="${S.col}">${ic(S.col?'panelOpen':'panelClose',20)}</button><div class="brand-mark">${ic('shield',18,2.2)}</div><div class="bt"><b>Coverline</b><span>Ops console</span></div></div>
+  <div class="brand"><button class="tg" data-tip="${S.col?'Expand sidebar':'Collapse sidebar'}" data-act="toggleCol" aria-label="${S.col?'Expand':'Collapse'} sidebar" aria-pressed="${S.col}">${ic('menu',20)}</button><div class="brand-mark">${ic('shield',18,2.2)}</div><div class="bt"><b>Proposal form</b><span>Ops console</span></div></div>
   <nav class="nav" aria-label="Main">
    ${n('dash','Overview',v==='overview','','toOverview')}
    ${n('file','Proposals',inProp,cnt,'toProposals')}
@@ -26,9 +26,9 @@ function crumbs(){
 }
 function verMenu(){
  const open=S.menu==='ver';
- const opt=(v,t,d)=>`<button class="pop-item vopt" role="menuitemradio" aria-checked="${VER===v}" data-act="pickVer" data-v="${v}"><span class="vb">${v.toUpperCase()}</span><span class="t"><b>${t}</b><span>${d}</span></span>${VER===v?`<span class="ck">${ic('check',18,2.5)}</span>`:''}</button>`;
- return `<div class="ver"><button class="ver-btn" data-act="toggleVer" aria-haspopup="true" aria-expanded="${open}" aria-label="Prototype version: ${VER.toUpperCase()}"><span>Version</span><b class="vb">${VER.toUpperCase()}</b>${ic('down',14)}</button>
-  ${open?`<div class="pop ver-pop" role="menu"><h4>Prototype version</h4>${opt('v1','Current version','Upload, parse, groups, variables and review')}${opt('v4','Idealistic','V3 plus a work queue, keyboard shortcuts, command palette, side-by-side source, autosave and a faster data grid')}${opt('v3','Smart review','Full journey plus auto-matched terms, so you only act on what needs attention')}${opt('v2','Full journey','Adds unplaced terms, templates with variants, plans, packages, PF revisions and partner variables')}</div>`:''}</div>`;
+ const opt=(v,t,d)=>`<button class="pop-item vopt" role="menuitemradio" aria-checked="${VER===v}" data-act="pickVer" data-v="${v}"><span class="vb">${VLAB[v]}</span><span class="t"><b>${t}</b><span>${d}</span></span>${VER===v?`<span class="ck">${ic('check',18,2.5)}</span>`:''}</button>`;
+ return `<div class="ver"><button class="ver-btn" data-act="toggleVer" aria-haspopup="true" aria-expanded="${open}" aria-label="Prototype version: ${VLAB[VER]}"><span>Version</span><b class="vb">${VLAB[VER]}</b>${ic('down',14)}</button>
+  ${open?`<div class="pop ver-pop" role="menu"><h4>Prototype version</h4>${opt('v3','Smart review','Groups, left-overs, templates with auto-matched terms, plans and packages')}${opt('v4','Idealistic','Everything in V1 plus a work queue, keyboard shortcuts, command palette, side-by-side source, autosave and a faster data grid')}</div>`:''}</div>`;
 }
 function meMenu(){
  const open=S.menu==='me';

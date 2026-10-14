@@ -116,12 +116,12 @@ function wDoneRender(msg){render();if(msg)toast(msg)}
 Object.assign(ACT,{
  toggleVer(){S.menu=S.menu==='ver'?null:'ver';renderTop()},
  toggleMe(){S.menu=S.menu==='me'?null:'me';renderTop()},
- pickVer(t){const v=t.dataset.v;S.menu=null;if(v===VER){renderTop();return}closeOv();VER=v;try{localStorage.setItem('ver',v)}catch(e){}S.sb=false;S.gm=S.lm=W.gm=null;render(true);toast(`Switched to ${v.toUpperCase()}${v==='v4'?': the idealistic version':v==='v3'?': smart review':v==='v2'?': the full journey':': the current version'}`)},
+ pickVer(t){const v=t.dataset.v;S.menu=null;if(v===VER){renderTop();return}closeOv();VER=v;try{localStorage.setItem('ver',v)}catch(e){}S.sb=false;S.gm=S.lm=W.gm=null;render(true);toast(`Switched to ${VLAB[v]}${v==='v4'?': idealistic':': smart review'}`)},
  resetVer(){
   S.menu=null;closeOv();try{localStorage.removeItem('spot_ai');localStorage.removeItem('tour_w')}catch(e){}W.dens='compact';W.rsel=[];W.docTouched=false;
   if(VER!=='v1'){clearInterval(wtimer);wtimer=null;W.seedDone=false;W.proposals=[];W.packages=[];W.corrections=[];W.requests=[];W.audit=[];Object.keys(W.partners).forEach(k=>{W.partners[k]={frozen:k==='north',by:k==='north'?'Admin · Prakash V':null,at:k==='north'?wNow():null,vars:wBaseVars(k==='north'?'15%':'')}});W.view='overview';W.pid=null;W.stage=null;W.role='operator';W.pkg={ack:false,name:'',sel:[],err:''};W.pv={value:'',reason:''};wInit()}
   else{clearInterval(ptimer);ptimer=null;Object.assign(S,{view:'overview',pid:null,tab:'all',hq:'',seq:151,props:seed(),masters:[...MASTERS],nf:blankNf(),nfid:null})}
-  render(true);toast(`${VER.toUpperCase()} demo data reset`);
+  render(true);toast(`${VLAB[VER]} demo data reset`);
  },
  w_role(){W.role=W.role==='admin'?'operator':'admin';S.menu=null;render();toast(`Now acting as ${W.role==='admin'?'an administrator (demo)':'an operator'}`)},
  w_nav(t,e){e&&e.preventDefault&&e.preventDefault();if(W.view!==t.dataset.v||W.pid)wPush();W.view=t.dataset.v;W.pid=null;W.gm=null;S.sb=false;render(true)},

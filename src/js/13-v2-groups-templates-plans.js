@@ -256,11 +256,14 @@ function wPlans(p){
  if(!tpls.length)return '';
  const pend=wPending(p).length,packaged=p.status==='packaged';
  const term=x=>x.generated&&!x.needsGeneration;
+ if(!W.ui.planTab||!tpls.some(x=>x.id===W.ui.planTab))W.ui.planTab=tpls[0].id;
+ const cur=tpls.find(x=>x.id===W.ui.planTab);
  return `${wInfo(5,'Review the plan combinations, then generate',`One row per Sum Insured variant is prefilled. Each row picks one variant per section. Scroll sideways to see every field, confirm each row, then generate. Generation is final for a template version and makes its rows read-only.`,`<span class="chip">${wDot('var(--good)')}${p.plans.filter(term).length}/${p.plans.length} rows active</span>`)}
   ${pend?`<div class="alert a-warn">${ic('alert',18)}<div><b>${pend} revision ${pend>1?'changes are':'change is'} waiting for a decision.</b> Plans can't be generated until they are accepted or kept.</div><div class="ax"><button class="btn btn-sm" data-act="w_stage" data-s="document">Review changes</button></div></div>`:''}
   ${packaged?`<div class="alert a-ok">${ic('lock',18)}<div>This proposal is in a published package. Plans are locked.</div></div>`:''}
   ${packaged||tpls.every(t=>wTplLocked(p,t.id))?'':`<div class="xtop"><span>${tpls.length} ${tpls.length>1?'templates':'template'} · Confirm every valid row in one go</span><button class="btn btn-xs" data-act="w_confEvery">${ic('cc',13)}Confirm all rows</button></div>`}
-  ${tpls.map((t,i)=>wPlanSection(p,t,i)).join('')}`;
+  ${tpls.length>1?`<div class="tbar2"><div class="gtabs" role="tablist" aria-label="Templates">${tpls.map(x=>{const rs=p.plans.filter(q=>q.templateId===x.id),dn=rs.length>0&&rs.every(q=>term(q)||q.reviewStatus==='confirmed');return `<button class="gt" role="tab" aria-selected="${x.id===cur.id}" data-act="w_ptab" data-t="${x.id}">${esc(wGroupOfTpl(p,x).name)}<span class="cnt ${dn?'ok':''}">${dn?`${ic('check',11,3)}`:''}${rs.filter(q=>term(q)||q.reviewStatus==='confirmed').length}/${rs.length}</span></button>`}).join('')}</div></div>`:''}
+  ${wPlanSection(p,cur,0)}`;
 }
 function wBarPlans(p){
  const all=p.status==='plans_active'||p.status==='packaged';
