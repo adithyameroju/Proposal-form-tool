@@ -13,6 +13,7 @@ function wtick(){
 }
 function wRerender(p,msg,err){
  if(VER==='v1')return;
+ if(typeof wNotify==='function'&&V3X())wNotify(err?'error':'ok',msg,p.id,err);
  if(W.view==='proposal'&&W.pid===p.id){W.stage='document';render(true)}else{render();toast(msg,{err:err?1:undefined,wopen:p.id})}
 }
 function wFail(p){
@@ -70,7 +71,7 @@ function wDocDrawer(){
  const fb=d.querySelector('.foc'),bd=d.querySelector('.dd-b');
  if(fb&&W.docFocusScrolled!==W.docFocus){W.docFocusScrolled=W.docFocus;fb.scrollIntoView({block:'center',behavior:'smooth'})}else if(bd)bd.scrollTop=oldTop;
 }
-function wAfterPage(){wDocDrawer();if(typeof wAfterHook==='function')wAfterHook();const fit=VER!=='v1'&&(W.view==='overview'||W.view==='proposals');$id('page').classList.toggle('fitpage',fit);document.body.classList.toggle('fitbody',fit);if(fit)wFit();if(W.view==='proposal'){const p=wcur();if(p&&p.status==='parsing')wPaint(p)}}
+function wAfterPage(){wDocDrawer();if(typeof wAfterHook==='function')wAfterHook();const fit=(VER!=='v1'&&(W.view==='overview'||W.view==='proposals'));$id('page').classList.toggle('fitpage',fit);document.body.classList.toggle('fitbody',fit);if(fit)wFit();if(W.view==='proposal'){const p=wcur();if(p&&p.status==='parsing')wPaint(p)}}
 function wSbNav(){
  const n=(ico,t,cur,cnt,v)=>`<a href="#" data-tip="${t}" ${cur?'aria-current="page"':''} data-act="w_nav" data-v="${v}">${ic(ico,20)}<span class="lbl">${t}</span>${cnt?`<span class="count">${cnt}</span>`:''}</a>`;
  const v=W.view,pk=W.packages.filter(k=>k.partnerId===S.co.id).length;
@@ -131,7 +132,7 @@ Object.assign(ACT,{
   if(p.status==='draft'){wOpenIntake({draftId:p.id});wAttachFile({name:p.file,size:p.fileSize,mode:'clean'});const r=W.intake.files[0];if(r&&p.masterId)r.policyId=p.masterId;refreshIntake();return}
   S.co.id!==p.partnerId&&0;
   W.pid=p.id;W.view='proposal';W.ui={tpl:null,comp:null,vid:null,planTab:null,open:null,pricing:''};
-  if(VER==='v4'&&!W.docTouched&&innerWidth>=1300){W.docOpen=true;W.docView='paper'}
+  if(IDEAL()&&!W.docTouched&&innerWidth>=1300){W.docOpen=true;W.docView='paper'}
   W.stage=(p.status==='parsing'||p.status==='failed'||wPending(p).length)?'document':wCurStage(p);
   S.sb=false;render(true);
  },
@@ -322,7 +323,7 @@ Object.assign(ACT,{
  w_triOpen(t){const [p,c]=wOpenCl(t.dataset.id);W.ui.tri='all';W.ui.comp=c.componentKey;W.ui.vid=c.variantId===ALL?null:c.variantId;W.ui.edit=null;renderPage()},
  w_acceptAuto(){
   const p=wcur(),tp=p.templates.find(x=>x.id===W.ui.tpl);if(!tp||wTplLocked(p,tp.id))return;const off=W.ui.autoOff||[],list=wAutoList(p,tp).filter(c=>!off.includes(c.id));if(!list.length)return;
-  confirmDlg({title:`Accept ${list.length} automatic ${list.length>1?'matches':'match'}?`,body:'These terms were mapped with high confidence and have every required value. You can still reopen any of them from All terms.',label:`Accept ${list.length}`,onOk:()=>{list.forEach(c=>{c.verified=true});wRefreshPlans(p,tp.id);wTouch(p);wRecompute(p);wAudit('Auto-matches accepted',`${list.length} terms · ${p.name}`);W.ui.tri='attn';W.ui.comp=null;W.ui.autoOff=[];if(VER==='v4')W.undoFn=()=>{list.forEach(c=>{c.verified=false});wRefreshPlans(p,tp.id);wTouch(p);wRecompute(p);W.ui.tri='auto';render()};render();toast(`${list.length} ${list.length>1?'terms':'term'} accepted. ${wTplComplete(p,tp)?'This template is complete.':'Only the items that need you are left.'}`,VER==='v4'?{uundo:1}:{})}});
+  confirmDlg({title:`Accept ${list.length} automatic ${list.length>1?'matches':'match'}?`,body:'These terms were mapped with high confidence and have every required value. You can still reopen any of them from All terms.',label:`Accept ${list.length}`,onOk:()=>{list.forEach(c=>{c.verified=true});wRefreshPlans(p,tp.id);wTouch(p);wRecompute(p);wAudit('Auto-matches accepted',`${list.length} terms · ${p.name}`);W.ui.tri='attn';W.ui.comp=null;W.ui.autoOff=[];if(IDEAL())W.undoFn=()=>{list.forEach(c=>{c.verified=false});wRefreshPlans(p,tp.id);wTouch(p);wRecompute(p);W.ui.tri='auto';render()};render();toast(`${list.length} ${list.length>1?'terms':'term'} accepted. ${wTplComplete(p,tp)?'This template is complete.':'Only the items that need you are left.'}`,IDEAL()?{uundo:1}:{})}});
  },
  w_var(t){W.ui.vid=t.dataset.v;W.ui.edit=null;renderPage()},
  w_addVar(t){
@@ -348,7 +349,7 @@ Object.assign(ACT,{
   else if(t.dataset.m==='shared'&&c.variantId!==ALL){wMakeShared(p,c);wAudit('Term made shared',`${c.ref}`)}
   wRefreshPlans(p,tp.id);wTouch(p);wRecompute(p);render();
  },
- w_verify(t){const [p,c]=wOpenCl(t.dataset.id);if(wGuard(p,c))return;if(c.build&&c.build.missing.length)return toast('Fill the missing values first.',{err:1});c.verified=true;wRefreshPlans(p,wTplOf(p,c.groupId).id);wTouch(p);wRecompute(p);wAudit('Term confirmed',`${c.ref}`);if(c.termId&&c.variantId!==ALL){const sibs=wTierSibs(p,c),i=sibs.indexOf(c),nx=[...sibs.slice(i+1),...sibs.slice(0,i)].find(x=>!wResolved(x));if(nx){W.ui.vid=nx.variantId;W.ui.edit=null}}wAdvanceComp(p,c);if(VER==='v4')wV4AfterVerify(p,c);render()},
+ w_verify(t){const [p,c]=wOpenCl(t.dataset.id);if(wGuard(p,c))return;if(c.build&&c.build.missing.length)return toast('Fill the missing values first.',{err:1});c.verified=true;wRefreshPlans(p,wTplOf(p,c.groupId).id);wTouch(p);wRecompute(p);wAudit('Term confirmed',`${c.ref}`);if(c.termId&&c.variantId!==ALL){const sibs=wTierSibs(p,c),i=sibs.indexOf(c),nx=[...sibs.slice(i+1),...sibs.slice(0,i)].find(x=>!wResolved(x));if(nx){W.ui.vid=nx.variantId;W.ui.edit=null}}wAdvanceComp(p,c);if(IDEAL())wV4AfterVerify(p,c);render()},
  w_unverify(t){const [p,c]=wOpenCl(t.dataset.id);if(wGuard(p,c))return;c.verified=false;wRefreshPlans(p,wTplOf(p,c.groupId).id);wTouch(p);wRecompute(p);render()},
  w_prefill(){
   const p=wcur();if(!p||p.status==='packaged')return;
@@ -425,10 +426,10 @@ Object.assign(ACT,{
  w_priceAll(t){const p=wcur();const i=$id('wprice-'+t.dataset.t);const v=(i?i.value:'').trim();if(!v)return toast('Enter a pricing schema first.',{err:1});p.plans.filter(x=>x.templateId===t.dataset.t&&!(x.generated&&!x.needsGeneration)).forEach(x=>{x.pricingSchema=v;x.reviewStatus='pending'});renderPage();renderBar()},
  w_generateAll(){
   const p=wcur(),rows=p.plans.filter(x=>!(x.generated&&!x.needsGeneration));if(!rows.length)return;
-  const dlg=VER==='v4'?(o=>{pendingConfirm=o.onOk;openOv('modal',{title:o.title,body:`<p style="margin:0 0 12px;color:var(--ink-2)">${o.body}</p><ul class="locklist"><li>${rows.length} ${rows.length>1?'plan rows':'plan row'} become active and read-only</li><li>${p.templates.length} ${p.templates.length>1?'templates and groups':'template and group'} become view-only</li><li>Only a revised PF can reopen them</li></ul><div class="fld" style="margin-top:14px"><label for="gtype">Type GENERATE to confirm</label><input class="in" id="gtype" autocomplete="off" placeholder="GENERATE"></div>`,foot:`<button class="btn" data-act="closeOv">Cancel</button><button class="btn btn-p" id="gok" data-act="confirmOk" disabled>${o.label}</button>`})}):confirmDlg;
+  const dlg=IDEAL()?(o=>{pendingConfirm=o.onOk;openOv('modal',{title:o.title,body:`<p style="margin:0 0 12px;color:var(--ink-2)">${o.body}</p><ul class="locklist"><li>${rows.length} ${rows.length>1?'plan rows':'plan row'} become active and read-only</li><li>${p.templates.length} ${p.templates.length>1?'templates and groups':'template and group'} become view-only</li><li>Only a revised PF can reopen them</li></ul><div class="fld" style="margin-top:14px"><label for="gtype">Type GENERATE to confirm</label><input class="in" id="gtype" autocomplete="off" placeholder="GENERATE"></div>`,foot:`<button class="btn" data-act="closeOv">Cancel</button><button class="btn btn-p" id="gok" data-act="confirmOk" disabled>${o.label}</button>`})}):confirmDlg;
   dlg({title:`Generate ${rows.length} ${rows.length>1?'plans':'plan'}?`,body:'Generation is final for this version. The rows become active and read-only, and their templates and groups become view-only. Only a revised PF can reopen them.',label:'Generate plans',onOk:()=>{
    rows.forEach(x=>{x.generated=true;x.needsGeneration=false;x.active=true;x.generatedVersion=p.version;x.generatedAt=wNow();x.impact=[];x.reviewStatus='confirmed';x.agent=false});p.templates.forEach(t=>{t.reopened=false});
-   wTouch(p);wRecompute(p);wAudit('Plans generated',`${p.name} · ${rows.length} ${rows.length>1?'rows':'row'} · v${p.version}`);W.view='proposals';W.pid=null;W.hist=[];render(true);toast(`${esc(p.name)}: ${rows.length} ${rows.length>1?'plans':'plan'} generated`,{wopen:p.id})}});
+   wTouch(p);wRecompute(p);wAudit('Plans generated',`${p.name} · ${rows.length} ${rows.length>1?'rows':'row'} · v${p.version}`);if(p.approval){wAudit('Approved',`${p.name} · approved by ${W.role==='admin'?'Administrator':'Operator'}`);p.approval=null}if(typeof wNotify==='function'&&V3X())wNotify('ok',`${p.name}: plans generated`,p.id);W.view='proposals';W.pid=null;W.hist=[];render(true);toast(`${esc(p.name)}: ${rows.length} ${rows.length>1?'plans':'plan'} generated`,{wopen:p.id})}});
  },
  w_generate(t){
   const p=wcur(),tp=p.templates.find(x=>x.id===t.dataset.t);const rows=p.plans.filter(x=>x.templateId===tp.id&&!(x.generated&&!x.needsGeneration));

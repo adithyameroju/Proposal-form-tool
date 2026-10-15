@@ -57,7 +57,7 @@ function wIntakeBody(){
   const rev=f.match&&f.asRev&&!f.match.identical&&!wRevBlock(f.match.p);
   return `<div class="ifile"><div class="ifh"><div class="fi">PDF</div><div style="min-width:0"><div class="fn">${esc(f.name)}</div><div class="fm">${f.size} · ${f.mode==='partial'?'scanned pages':f.mode==='fail'?'may not be readable':'text readable'}</div></div>
    ${rev?`<div class="ifm note">Uses ${esc(wMasterName(f.match.p.masterId))} from the proposal it revises</div>`:`<div class="ifm"><label class="sr" for="mp-${f.key}">Master policy</label><select class="in" id="mp-${f.key}" data-wc="filePolicy" data-k="${f.key}"><option value="">Choose a ${esc(S.co.short)} master policy</option>${pm.map(m=>`<option value="${m.id}" ${f.policyId===m.id?'selected':''}>${esc(m.name)}</option>`).join('')}</select></div>`}
-   <button class="icon-btn" data-act="w_rmFile" data-k="${f.key}" aria-label="Remove ${esc(f.name)}">${ic('x',16)}</button></div>${wFileNote(f)}</div>`;
+   <button class="icon-btn" data-act="w_rmFile" data-k="${f.key}" aria-label="Remove ${esc(f.name)}">${ic('x',16)}</button></div>${V3X()?wPreflight(f):''}${wFileNote(f)}</div>`;
  }).join('');
  return `<div class="fpg2"><section class="card"><div class="card-h"><div><h3>Add proposal PDFs</h3><p>Drop several at once. Each file is checked for duplicates and revisions.</p></div></div><div class="card-b">
    ${I.err?`<div class="alert a-bad" role="alert">${ic('alert',16)}<div>${esc(I.err)}</div></div>`:''}

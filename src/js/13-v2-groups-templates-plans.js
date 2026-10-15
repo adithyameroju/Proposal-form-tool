@@ -29,14 +29,14 @@ function wBarGroups(p){
   :ok?['',`Structure confirmed · ${n} ${n>1?'groups':'group'}`,'You can still change a group until its plans are generated.']
   :['',`${n} ${n>1?'groups':'group'} · structure not confirmed yet`,'Confirming creates one template per group.'];
  return `<div class="bar-in"><button class="btn" data-act="w_stage" data-s="document">${ic('left',17)}Document</button><div class="m ${msg[0]}"><b>${msg[1]}</b><span>${msg[2]}</span></div>
-  <div class="bar-r"><button class="btn" data-act="w_saveExit" title="${VER==='v4'?'Everything is saved automatically':'Save and leave'}">${VER==='v4'?'Exit':'Save &amp; exit'}</button>
+  <div class="bar-r"><button class="btn" data-act="w_saveExit" title="${IDEAL()?'Everything is saved automatically':'Save and leave'}">${IDEAL()?'Exit':'Save &amp; exit'}</button>
   ${ok?`<button class="btn btn-p btn-lg" data-act="w_stage" data-s="leftovers">Continue${ic('arrow',18)}</button>`:`<button class="btn btn-p btn-lg" data-act="w_gConfirm" ${hasBase&&!locked?'':'disabled'}>Confirm ${n} ${n>1?'groups':'group'}${ic('arrow',18)}</button>`}</div></div>`;
 }
 function wBarLeftovers(p){
  const un=wUnplaced(p).length;
  const msg=un?['warn',`${un} left-over ${un>1?'terms':'term'} to place`,'Place each one, or set it aside with a reason.']:p.loReview?['','All left-over terms handled','Approving makes the placements final.']:['','Left-over terms placed','Nothing else to do here.'];
  return `<div class="bar-in"><button class="btn" data-act="w_stage" data-s="groups">${ic('left',17)}Groups</button><div class="m ${un?'warn':''}"><b>${msg[1]}</b><span>${msg[2]}</span></div>
-  <div class="bar-r"><button class="btn" data-act="w_saveExit" title="${VER==='v4'?'Everything is saved automatically':'Save and leave'}">${VER==='v4'?'Exit':'Save &amp; exit'}</button><button class="btn btn-p btn-lg" data-act="${p.loReview?'w_approveLeft':'w_stage'}" data-s="templates" ${un?'disabled':''}>Continue to templates${ic('arrow',18)}</button></div></div>`;
+  <div class="bar-r"><button class="btn" data-act="w_saveExit" title="${IDEAL()?'Everything is saved automatically':'Save and leave'}">${IDEAL()?'Exit':'Save &amp; exit'}</button><button class="btn btn-p btn-lg" data-act="${p.loReview?'w_approveLeft':'w_stage'}" data-s="templates" ${un?'disabled':''}>Continue to templates${ic('arrow',18)}</button></div></div>`;
 }
 
 /* ---------- unplaced terms stage ---------- */
@@ -71,18 +71,20 @@ function wLeftCard(p){
 
 /* ---------- smart matching + workbench ---------- */
 const wBand=n=>n>=90?['hi','High match']:n>=80?['mid','Check']:['lo','Low match'];
-const wMatchChip=n=>n==null?'':VER==='v4'?`<span class="mchip ${wBand(n)[0]}" title="${n}% match rate"><i></i>${wBand(n)[1]}</span>`:`<span class="mchip ${n>=95?'hi':n>=85?'mid':'lo'}" title="How closely the extracted values match the wording"><b>${n}%</b> match rate</span>`;
+const wMatchChip=n=>n==null?'':IDEAL()?`<span class="mchip ${wBand(n)[0]}" title="${n}% match rate"><i></i>${wBand(n)[1]}</span>`:`<span class="mchip ${n>=95?'hi':n>=85?'mid':'lo'}" title="How closely the extracted values match the wording"><b>${n}%</b> match rate</span>`;
 const wAuto=c=>!c.na&&!c.verified&&c.componentKey!==null&&c.groupId!==null&&wCase(c)==='review'&&!!c.build&&c.build.status==='built'&&!(c.build.missing&&c.build.missing.length)&&!c.build.reason&&c.mappedBy!=='operator'&&!c.prefilled;
 const wAutoList=(p,t)=>wClausesOf(p,t.groupId).filter(wAuto);
 const wAttnOf=(p,t,k)=>wClausesOf(p,t.groupId).filter(c=>c.componentKey===k&&!c.na&&!wResolved(c)&&!wAuto(c)).length;
 function wWbRow(p,t,c,i,n,real,locked){
  const k=wCase(c),on=c.variantId===ALL,showAll=real>1&&!locked&&k!=='na'&&c.build&&c.build.status!=='no_attribute';
  const badge=n>1?`<span class="wbn">${i+1}</span>`:'';
- const foc=VER==='v4'&&W.ui.focusCl===c.id?' foc':'';
- const v4=VER==='v4'&&k!=='na'&&c.build?`${wMatchChip(wConf(c))}`:'';
- const why=VER==='v4'&&k!=='na'&&k!=='verified'?`<div class="why">${esc(wWhy(c))}</div>`:'';
+ const foc=IDEAL()&&W.ui.focusCl===c.id?' foc':'';
+ const nc=(c.comments||[]).length,cmtB=V3X()&&k!=='na'?`<button class="btn btn-xs btn-t cmt ${nc?'has':''}" data-act="w_cmt" data-id="${c.id}" aria-expanded="${W.ui.cmt===c.id}" title="Comments">${ic('msg',13)}${nc?nc:'Comment'}</button>`:'';
+ const thread=V3X()&&W.ui.cmt===c.id?`<div class="thread">${(c.comments||[]).map(m=>`<div class="cm"><b>${esc(m.by)}</b><em>${wAgo(m.at)}</em><p>${esc(m.text)}</p></div>`).join('')||'<div class="cm none">No comments yet. Add context for the next reviewer.</div>'}<div class="cmnew"><textarea id="cmtbox" class="in" rows="2" placeholder="Write a comment"></textarea><button class="btn btn-xs btn-p" data-act="w_cmtPost" data-id="${c.id}">Post</button></div></div>`:'';
+ const v4=IDEAL()&&k!=='na'&&c.build?`${wMatchChip(wConf(c))}`:'';
+ const why=IDEAL()&&k!=='na'&&k!=='verified'?`<div class="why">${esc(wWhy(c))}</div>`:'';
  return `<div class="wbq${foc}" data-cl="${c.id}">${badge}<div><blockquote>${esc(c.text)}</blockquote><button class="lnk" data-act="w_ev" data-id="${c.id}">${esc(c.ref)} · p. ${c.page}</button></div></div>
-  <div class="wbe${foc}"><div class="wbeh">${badge}<span class="pill ${CASE_TONE[k]}">${CASE_L[k]}</span>${v4}${showAll?wApplyAll(c,on,locked):''}</div>${why}${wEntryHtml(p,t,c,locked)}</div>`;
+  <div class="wbe${foc}"><div class="wbeh">${badge}<span class="pill ${CASE_TONE[k]}">${CASE_L[k]}</span>${v4}${cmtB}${showAll?wApplyAll(c,on,locked):''}</div>${why}${wEntryHtml(p,t,c,locked)}${thread}</div>`;
 }
 function wWorkbench(p,t,cur,vs,v,cl,allCl,locked){
  const real=vs.filter(x=>!x.isBlank);
@@ -195,7 +197,7 @@ function wTemplates(p){
   <div class="tbar2"><div class="gtabs" role="tablist" aria-label="Templates">${tpls.map(x=>{const s=wTplStats(p,x),g=wGroupOfTpl(p,x),dn=wTplComplete(p,x);return `<button class="gt" role="tab" aria-selected="${x.id===t.id}" data-act="w_tpl" data-t="${x.id}">${esc(g.name)}<span class="cnt ${dn?'ok':''}">${dn?`${ic('check',11,3)}Done`:`${s.resolved}/${s.total}`}</span>${wTplLocked(p,x.id)?ic('lock',12):''}</button>`}).join('')}</div>
    <div class="tbact">${open&&!locked&&!smart?`<button class="btn btn-sm" data-act="w_verifyAll">${ic('cc',14)}Confirm all clean terms</button>`:''}</div></div>
   ${smart?`<div class="smart"><span class="sico">${ic('spark',17)}</span><div class="stx"><b>${autoList.length+stats.resolved>0?`${autoList.length+wClausesOf(p,t.groupId).filter(c=>c.verified&&!c.na).length} of ${wClausesOf(p,t.groupId).filter(c=>!c.na).length} terms matched with high confidence`:'No confident matches in this template'}</b><span>${attnN?`${attnN} ${attnN===1?'needs':'need'} your attention`:'Nothing needs your attention'}</span></div><button class="btn btn-xs btn-t sp-how" data-act="spotAI" title="How smart review works">${ic('info',14)}How it works</button><div class="seg tri" role="tablist" aria-label="Review filter"><button role="tab" aria-selected="${tri==='attn'}" data-act="w_tri" data-m="attn">Needs attention <b>${attnN}</b></button><button role="tab" aria-selected="${tri==='auto'}" data-act="w_tri" data-m="auto">Auto-matched <b>${autoList.length}</b></button><button role="tab" aria-selected="${tri==='all'}" data-act="w_tri" data-m="all">All terms <b>${wClausesOf(p,t.groupId).filter(c=>!c.na).length}</b></button></div></div>`:''}
-  ${VER==='v4'&&tri!=='auto'?wRvStrip(p,t):''}
+  ${IDEAL()&&tri!=='auto'?wRvStrip(p,t):''}
   ${(()=>{const nx=wNextTpl(p,tpls,t);return wTplComplete(p,t)&&!locked&&nx?`<div class="alert a-ok nextg">${ic('check',18,2.5)}<div><b>${esc(wGroupOfTpl(p,t).name)} is complete.</b> ${tpls.filter(x=>!wTplComplete(p,x)).length} ${tpls.filter(x=>!wTplComplete(p,x)).length>1?'groups':'group'} left to check. Up next: ${esc(wGroupOfTpl(p,nx).name)}.</div><div class="ax"><button class="btn btn-sm btn-p" data-act="w_tpl" data-t="${nx.id}">Next group: ${esc(wGroupOfTpl(p,nx).name)}${ic('arrow',15)}</button></div></div>`:''})()}
   ${un>0?`<div class="alert a-warn">${ic('alert',18)}<div><b>${un} term${un>1?'s are':' is'} still unplaced.</b> No template can finish until every term is in a group or set aside.</div><div class="ax"><button class="btn btn-sm" data-act="w_stage" data-s="leftovers">Place terms</button></div></div>`:''}
   ${locked?`<div class="alert a-ok">${ic('lock',18)}<div>${p.status==='packaged'?'This proposal is in a published package.':'Plans were generated from this template.'} It is view-only. Changes arrive through a revised PF.</div></div>`:''}
@@ -209,7 +211,7 @@ function wTemplates(p){
 function wBarTemplates(p){
  const done=wTplDone(p),un=wUnplaced(p).length,open=p.templates.reduce((n,t)=>n+wTplStats(p,t).open,0);
  return `<div class="bar-in"><button class="btn" data-act="w_stage" data-s="groups">${ic('left',17)}Groups</button><div class="m ${done?'':'warn'}"><b>${done?'All templates complete':un?`${un} unplaced ${un>1?'terms':'term'} and ${open} to resolve`:`${open} ${open===1?'term':'terms'} left to resolve`}</b><span>${done?'Plan combinations can now be proposed from the variants.':'Confirm each term, or set it aside with a reason. Plans unlock when every template is complete.'}</span></div>
-  ${(()=>{const tpls=p.groups.map(g=>wTplOf(p,g.id)).filter(Boolean),t=tpls.find(x=>x.id===W.ui.tpl),nx=t&&!done&&wTplComplete(p,t)?wNextTpl(p,tpls,t):null;return `<div class="bar-r"><button class="btn" data-act="w_saveExit" title="${VER==='v4'?'Everything is saved automatically':'Save and leave'}">${VER==='v4'?'Exit':'Save &amp; exit'}</button>${nx?`<button class="btn btn-p btn-lg" data-act="w_tpl" data-t="${nx.id}">Next group${ic('arrow',18)}</button>`:`<button class="btn btn-p btn-lg" data-act="w_stage" data-s="plans" ${done?'':'disabled'}>Continue to plans${ic('arrow',18)}</button>`}</div>`})()}</div>`;
+  ${(()=>{const tpls=p.groups.map(g=>wTplOf(p,g.id)).filter(Boolean),t=tpls.find(x=>x.id===W.ui.tpl),nx=t&&!done&&wTplComplete(p,t)?wNextTpl(p,tpls,t):null;return `<div class="bar-r">${V3X()?wProbBtn(p):''}<button class="btn" data-act="w_saveExit" title="${IDEAL()?'Everything is saved automatically':'Save and leave'}">${IDEAL()?'Exit':'Save &amp; exit'}</button>${nx?`<button class="btn btn-p btn-lg" data-act="w_tpl" data-t="${nx.id}">Next group${ic('arrow',18)}</button>`:`<button class="btn btn-p btn-lg" data-act="w_stage" data-s="plans" ${done?'':'disabled'}>Continue to plans${ic('arrow',18)}</button>`}</div>`})()}</div>`;
 }
 
 /* ---------- plans stage ---------- */
@@ -217,7 +219,10 @@ function wPlanSection(p,t,n){
  const rows=p.plans.filter(x=>x.templateId===t.id),g=wGroupOfTpl(p,t);
  const pend=wPending(p).length,blockedRev=pend>0,packaged=p.status==='packaged';
  const term=x=>x.generated&&!x.needsGeneration;
- const comps=wSelComps(p,t);
+ const allComps=wSelComps(p,t),hid=V3X()?(W.ui.hideCols||[]):[],comps=allComps.filter(k=>!hid.includes(k));
+ const fq=V3X()?(W.ui.gfind||'').trim().toLowerCase():'';
+ const vrows=fq?rows.filter(x=>(x.name+' '+x.displayName+' '+x.pricingSchema).toLowerCase().includes(fq)):rows;
+ const diffOf=(k,x)=>V3X()&&W.ui.gdiff&&rows[0]&&x!==rows[0]&&x.selection[k]!==rows[0].selection[k];
  const ready=rows.filter(x=>!term(x));
  const allConf=ready.length>0&&ready.every(x=>x.reviewStatus==='confirmed'&&!wPlanValid(p,x).length);
  const nConf=rows.filter(x=>term(x)||x.reviewStatus==='confirmed').length;
@@ -226,11 +231,11 @@ function wPlanSection(p,t,n){
  const sel=(W.ui.sel||[]).filter(id=>rows.some(x=>x.id===id));
  const row=(x,i)=>{
   const errs=wPlanValid(p,x),tm=term(x),ro=tm||packaged;
-  const cell=(f,ph,bad)=>ro?`<span class="pcell">${esc(x[f])||'—'}</span>`:`<input class="xin ${bad?'bad':''}" data-wc="planField" data-id="${x.id}" data-f="${f}" value="${esc(x[f])}" placeholder="${ph}" aria-label="${ph}">`;
+  const cell=(f,ph,bad)=>ro?`<span class="pcell">${esc(x[f])||'—'}</span>`:`<input class="xin ${bad?'bad':''}${x.touched&&x.touched[f]?' chg':''}" data-wc="planField" data-id="${x.id}" data-f="${f}" value="${esc(x[f])}" placeholder="${ph}" aria-label="${ph}">`;
   const vcell=k=>{
    const vs=wVars(t,k);const v=x.values.find(q=>q.componentKey===k);const showSum=k==='sum_insured';
    const sum=showSum&&v&&v.summary?`<small class="xsum" title="${esc(v.summary)}">${esc(v.summary)}</small>`:'';
-   return `<td class="xv">${ro?`<span class="pcell" title="${esc(v?v.summary:'')}">${esc(v?v.variantName:'—')}</span>`:`<select class="xin" data-wc="planSel" data-id="${x.id}" data-k="${k}" aria-label="${clabel(k)}" title="${esc(v?v.summary:'')}">${vs.map(o=>`<option value="${o.id}" ${x.selection[k]===o.id?'selected':''}>${o.isBlank?'Empty Option':esc(o.name)}</option>`).join('')}</select>`}${sum}</td>`;
+   return `<td class="xv${diffOf(k,x)?' xd':''}">${ro?`<span class="pcell" title="${esc(v?v.summary:'')}">${esc(v?v.variantName:'—')}</span>`:`<select class="xin${x.touched&&x.touched[k]?' chg':''}" data-wc="planSel" data-id="${x.id}" data-k="${k}" aria-label="${clabel(k)}" title="${esc(v?v.summary:'')}">${vs.map(o=>`<option value="${o.id}" ${x.selection[k]===o.id?'selected':''}>${o.isBlank?'Empty Option':esc(o.name)}</option>`).join('')}</select>`}${sum}</td>`;
   };
   const state=tm?`<span class="pill p-good">${ic('lock',11)} Active · v${x.generatedVersion}</span>`:x.needsGeneration?'<span class="pill p-warn">Needs regeneration</span>':x.reviewStatus==='confirmed'?'<span class="pill p-info">Confirmed</span>':'';
   return `<tr class="${tm?'gen':''}"><td class="xn xl1"><label class="xsel"><input type="checkbox" data-wc="rowSel" data-id="${x.id}" ${(W.ui.sel||[]).includes(x.id)?'checked':''} ${ro?'disabled':''} aria-label="Select row ${i+1}"><span>${i+1}</span></label></td>
@@ -243,11 +248,13 @@ function wPlanSection(p,t,n){
  return `<section class="card xsec" id="xs-${t.id}"><div class="card-h"><div><h3>${esc(g.name)} · Template</h3><p>${rows.length} plan ${rows.length===1?'combination':'combinations'}${tgen?' · Generated, read-only':''}</p></div>
    <div class="mact"><span class="pill ${nConf===rows.length&&rows.length?'p-good':'p-warn'}">${nConf}/${rows.length} rows confirmed</span>
    ${tgen||packaged?'':`<div class="inl"><input class="in xp" id="wprice-${t.id}" placeholder="Pricing schema" aria-label="Pricing schema for all rows"><button class="btn btn-xs" data-act="w_priceAll" data-t="${t.id}">Apply to all</button></div><button class="btn btn-xs" data-act="w_addPlan" data-t="${t.id}">${ic('plusC',14)}Add row</button><button class="btn btn-xs" data-act="w_confAll" data-t="${t.id}">${ic('cc',13)}Confirm all</button>`}</div></div>
+  ${V3X()?`<div class="xtools3"><div class="xfind">${ic('search',14)}<input id="gfind" data-wi="gfind" type="search" value="${esc(W.ui.gfind||'')}" placeholder="Find in table" aria-label="Find in table"></div><button class="btn btn-xs ${W.ui.gdiff?'btn-on':''}" data-act="w_gdiff" aria-pressed="${!!W.ui.gdiff}" title="Shade cells that differ from the first row">${ic('layers',13)}Highlight differences</button><div class="xcolsw"><button class="btn btn-xs" data-act="w_cols" aria-expanded="${!!W.ui.colsOpen}">${ic('sliders',13)}Columns${hid.length?` <b class="xn2">${allComps.length-hid.length}/${allComps.length}</b>`:''}</button>${W.ui.colsOpen?`<div class="xcols" role="menu">${allComps.map(k=>`<label><input type="checkbox" data-wc="colTog" data-k="${k}" ${hid.includes(k)?'':'checked'}>${clabel(k)}</label>`).join('')}<button class="btn btn-xs btn-t" data-act="w_colsAll">Show all</button></div>`:''}</div><button class="btn btn-xs" data-act="w_exportPlans" data-t="${t.id}">${ic('download',13)}Export CSV</button><span class="xhint">Tip: paste a range from Excel into any cell</span></div>`:''}
   ${sel.length?`<div class="xbulk"><b>${sel.length} selected</b><button class="btn btn-xs" data-act="w_confSel">${ic('cc',13)}Confirm</button><button class="btn btn-xs" data-act="w_dupSel">${ic('plusC',13)}Duplicate</button><button class="btn btn-xs btn-d" data-act="w_delSel">${ic('trash',13)}Delete</button><button class="btn btn-xs btn-t" data-act="w_clearSel">Clear</button></div>`:''}
   <div class="pscroll xwrap" tabindex="0" role="region" aria-label="${esc(g.name)} plan rows, scroll sideways for more fields"><table class="pt xt"><thead>
    <tr class="xg"><th class="xl1"></th><th class="xl2 gp">Plan info</th><th class="gp" colspan="3"></th><th class="gt2" colspan="${Math.max(1,comps.length)}">Template details</th><th class="xr"></th></tr>
    <tr><th class="xl1"><label class="xsel">${ro0?'':`<input type="checkbox" data-wc="rowSelAll" data-t="${t.id}" ${ready.length&&ready.every(x=>(W.ui.sel||[]).includes(x.id))?'checked':''} aria-label="Select all rows">`}<span>#</span></label></th><th class="xl2">Plan name</th><th>Display name</th><th>Pricing schema</th><th class="c">Default</th>${comps.map(k=>`<th>${clabel(k)}</th>`).join('')}<th class="xr">Status</th></tr></thead>
-   <tbody>${rows.map(row).join('')}</tbody></table></div>
+   <tbody>${vrows.map(x=>row(x,rows.indexOf(x))).join('')}</tbody></table></div>
+  ${rows.length&&!vrows.length?`<div class="empty-t">No rows match \u201c${esc(W.ui.gfind)}\u201d.</div>`:''}
   ${!rows.length?`<div class="empty-t">No plan rows. Add one to start.</div>`:''}</section>`;
 }
 function wPlans(p){
@@ -271,12 +278,20 @@ function wBarPlans(p){
  const conf=open.filter(x=>x.reviewStatus==='confirmed'&&!wPlanValid(p,x).length).length;
  const ready=open.length>0&&conf===open.length&&!wPending(p).length;
  const msg=all?['','All plans generated']:ready?['',`${open.length} ${open.length>1?'rows':'row'} confirmed`]:['warn',`${conf}/${open.length} rows confirmed`,'Confirm every row, then generate. Nothing is submitted until you do.'];
+ const ap=p.approval&&p.approval.status;
+ let primary;
+ if(all)primary=`<button class="btn btn-p btn-lg" data-act="w_nav" data-v="packages">${p.status==='packaged'?'View package':'Continue to packages'}${ic('arrow',18)}</button>`;
+ else if(V3X()&&W.role!=='admin'){
+  primary=ap==='pending'?`<button class="btn btn-t" data-act="w_role">Switch to admin (demo)</button><button class="btn btn-p btn-lg" disabled>${ic('clock',16)}Awaiting approval</button>`
+   :`<button class="btn btn-p btn-lg" data-act="w_submitAppr" ${ready?'':'disabled'}>${ic('shield',16)}Submit for approval</button>`;
+  if(ap==='pending'){msg[0]='';msg[1]='Waiting for an admin to approve';delete msg[2]}
+ }else primary=`<button class="btn btn-p btn-lg" data-act="w_generateAll" ${ready?'':'disabled'}>${ic('lock',16)}${V3X()&&ap==='pending'?'Approve &amp; generate':'Generate'} ${open.length} ${open.length>1?'plans':'plan'}</button>`;
  return `<div class="bar-in"><button class="btn" data-act="w_stage" data-s="templates">${ic('left',17)}Templates</button><div class="m ${msg[0]}"><b>${msg[1]}</b>${msg[2]?`<span>${msg[2]}</span>`:''}</div>
-  <div class="bar-r"><button class="btn" data-act="w_saveExit" title="${VER==='v4'?'Everything is saved automatically':'Save and leave'}">${VER==='v4'?'Exit':'Save &amp; exit'}</button>${all?`<button class="btn btn-p btn-lg" data-act="w_nav" data-v="packages">${p.status==='packaged'?'View package':'Continue to packages'}${ic('arrow',18)}</button>`:`<button class="btn btn-p btn-lg" data-act="w_generateAll" ${ready?'':'disabled'}>${ic('lock',16)}Generate ${open.length} ${open.length>1?'plans':'plan'}</button>`}</div></div>`;
+  <div class="bar-r">${V3X()?wProbBtn(p):''}<button class="btn" data-act="w_saveExit" title="${IDEAL()?'Everything is saved automatically':'Save and leave'}">${IDEAL()?'Exit':'Save &amp; exit'}</button>${primary}</div></div>`;
 }
 function wBarDocument(p){
  const cur=wCurStage(p),go=cur==='document'?'groups':cur,pend=wPending(p).length;
- return `<div class="bar-in"><button class="btn" data-act="w_back">${ic('left',17)}Back</button><div class="m"><b>${pend?`${pend} revision ${pend>1?'changes':'change'} to decide`:'Document parsed'}</b></div><div class="bar-r"><button class="btn" data-act="w_saveExit" title="${VER==='v4'?'Everything is saved automatically':'Save and leave'}">${VER==='v4'?'Exit':'Save &amp; exit'}</button><button class="btn btn-p btn-lg" data-act="w_stage" data-s="${go}" ${pend?'disabled':''}>Continue${ic('arrow',18)}</button></div></div>`;
+ return `<div class="bar-in"><button class="btn" data-act="w_back">${ic('left',17)}Back</button><div class="m"><b>${pend?`${pend} revision ${pend>1?'changes':'change'} to decide`:'Document parsed'}</b></div><div class="bar-r"><button class="btn" data-act="w_saveExit" title="${IDEAL()?'Everything is saved automatically':'Save and leave'}">${IDEAL()?'Exit':'Save &amp; exit'}</button><button class="btn btn-p btn-lg" data-act="w_stage" data-s="${go}" ${pend?'disabled':''}>Continue${ic('arrow',18)}</button></div></div>`;
 }
 function wBar(p){
  if(!p||p.status==='parsing'||p.status==='failed'||p.status==='draft')return '';

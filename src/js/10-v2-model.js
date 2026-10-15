@@ -273,7 +273,10 @@ const wTime=iso=>new Date(iso).toLocaleTimeString('en-IN',{hour:'numeric',minute
 const wDay=iso=>new Date(iso).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
 const wAgo=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);return m<1?'Just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
 function wAudit(label,detail){W.audit.unshift({id:'a'+rid(),label,detail,user:'Riya Kulkarni',role:W.role,at:wNow()})}
-const SMART=()=>VER==='v3'||VER==='v4';
+/* internal ids: v3 = shown as V1, v4 = V2, v5 = V3 (V3 contains everything in V2) */
+const SMART=()=>VER==='v3'||IDEAL()||VER==='v5';
+const IDEAL=()=>VER==='v4'||VER==='v5';
+const V3X=()=>VER==='v5';
 const wTouch=p=>{p.updatedAt=wNow();W.savedAt=Date.now();if(typeof wSavedPaint==='function')wSavedPaint()};
 const wMasterName=id=>{const m=W.masters.find(x=>x.id===id);return m?m.name:'No master policy'};
 

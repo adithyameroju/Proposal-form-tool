@@ -1,0 +1,304 @@
+/* ============================================================
+   PAT UI skin  (body.pat)  -  visual only.
+   Pages, structure and content are unchanged. This re-styles the existing
+   components in the Policy Authoring Tool (PAT) look:
+   purple sidebar, white header with a partner select, light-grey canvas,
+   Ant Design style controls.
+
+   Design tokens (map 1:1 to an antd theme):
+     colorPrimary   #1677ff        purple (sidebar, secondary btn)  #5b22c9
+     nav active     #6e5ce2        text   rgba(0,0,0,.88) / .65 / .45
+     border         #d9d9d9        split  #f0f0f0       canvas #f5f5f5
+     radius         6 controls, 8 cards     control height 32
+     font           system-ui stack, 14px
+   ============================================================ */
+body.pat{
+  color-scheme:light;
+  --bg:#f5f5f5;--surface:#fff;--surface-2:#fafafa;--line:#f0f0f0;--line-strong:#d9d9d9;
+  --ink:rgba(0,0,0,.88);--ink-2:rgba(0,0,0,.65);--ink-3:rgba(0,0,0,.45);
+  --accent:#1677ff;--accent-ink:#fff;--accent-soft:#e6f4ff;--accent-soft-ink:#0958d9;--accent-line:#91caff;
+  --good-bg:#f6ffed;--good-ink:#389e0d;--good-line:#b7eb8f;--good:#52c41a;
+  --warn-bg:#fffbe6;--warn-ink:#ad6800;--warn-line:#ffe58f;--warn:#faad14;
+  --bad-bg:#fff2f0;--bad-ink:#cf1322;--bad-line:#ffccc7;--bad:#ff4d4f;
+  --shadow:none;--pop:0 6px 16px rgba(0,0,0,.08),0 3px 6px -4px rgba(0,0,0,.12),0 9px 28px 8px rgba(0,0,0,.05);
+  --pt-purple:#5b22c9;--pt-purple-h:#7340d9;--pt-nav-on:#6e5ce2;
+  font:14px/1.5714 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f5f5;font-variant-numeric:normal;
+}
+body.pat button,body.pat input,body.pat select,body.pat textarea{font-family:inherit}
+html:has(body.pat)::-webkit-scrollbar{width:8px}
+html:has(body.pat)::-webkit-scrollbar-track{background:#ece6fa}
+html:has(body.pat)::-webkit-scrollbar-thumb{background:#8a6fe0;border-radius:4px}
+
+/* ---------- prototype switch (visible in both UIs) ---------- */
+.pat-sw{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);margin:0 6px 0 4px;white-space:nowrap}
+.pat-sw .swb{width:36px;height:20px;border-radius:10px;border:0;background:var(--line-strong);position:relative;padding:0;transition:background .15s}
+.pat-sw .swb i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}
+.pat-sw .swb.on{background:#1677ff}
+.pat-sw .swb.on i{left:18px}
+@media (max-width:1000px){.pat-sw span{display:none}}
+
+/* "Dev ready" marker in the version menu */
+.devtag{font-style:normal;margin-left:8px;font-size:10.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;background:#f6ffed;color:#389e0d;border:1px solid #b7eb8f;border-radius:4px;padding:1px 6px;vertical-align:1px}
+
+/* ---------- shell: sidebar ---------- */
+body.pat .app{--sbw:232px;background:#f5f5f5}
+body.pat .app.col{--sbw:80px}
+body.pat .sb{background:var(--pt-purple);border:0;padding:0;color:#fff;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+body.pat .sb::-webkit-scrollbar{display:none}
+body.pat .brand{height:64px;padding:0 12px;display:flex;align-items:center;gap:8px;margin:0}
+body.pat .brand .tg{width:32px;height:32px}
+body.pat .brand-mark{width:30px;height:30px;margin-left:0}
+body.pat .brand .bt{min-width:0;line-height:1.15}
+body.pat .brand .tg{color:rgba(255,255,255,.9);border-radius:6px}
+body.pat .brand .tg:hover{background:rgba(255,255,255,.12);color:#fff}
+body.pat .brand-mark{background:rgba(255,255,255,.18);color:#fff;border-radius:8px}
+body.pat .brand .bt b{color:#fff;font-size:16px;font-weight:700;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.pat .brand .bt span{color:rgba(255,255,255,.7);font-size:12px}
+body.pat .sb.c .brand{justify-content:center;padding:0}
+body.pat .sb.c .brand .tg{width:32px}
+body.pat .nav{padding:8px 6px 24px;gap:4px}
+body.pat .nav a,body.pat .col-btn{height:42px;padding:0 16px;border-radius:8px;color:rgba(255,255,255,.9);font-size:15px;font-weight:400;background:none;gap:12px}
+body.pat .nav a:hover,body.pat .col-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+body.pat .nav a[aria-current="page"]{background:var(--pt-nav-on);color:#fff;font-weight:500}
+body.pat .nav .count{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:9px}
+body.pat .sb-foot{border-top:1px solid rgba(255,255,255,.18);margin:0 6px;padding:8px 0}
+body.pat .sb-foot a{height:42px;padding:0 16px;border-radius:8px;color:rgba(255,255,255,.9);font-size:15px;gap:12px}
+body.pat .sb-foot a:hover{background:rgba(255,255,255,.1);color:#fff}
+body.pat .sb.c .nav a,body.pat .sb.c .sb-foot a{justify-content:center;padding:0}
+
+/* ---------- shell: header ---------- */
+body.pat .main{background:#f5f5f5}
+body.pat .top{height:64px;background:#fff;border-bottom:0;box-shadow:0 1px 0 #f0f0f0;padding:0 24px 0 16px;gap:14px;backdrop-filter:none;display:flex;align-items:center}
+body.pat .cmdk-btn{height:32px;min-width:220px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;color:rgba(0,0,0,.45);font-size:14px}
+body.pat .co-btn{height:32px;padding:0 11px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;justify-content:space-between;gap:10px}
+body.pat .co-btn:hover{border-color:#4096ff}
+body.pat .co-btn .av{display:none}
+body.pat .co-btn .t b{font-size:14px;font-weight:400;max-width:none}
+body.pat .co-btn svg{color:rgba(0,0,0,.25)}
+body.pat .ver-btn{height:28px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;font-size:12.5px;padding:0 8px;color:rgba(0,0,0,.65)}
+body.pat .ver-btn .vb,body.pat .vb{background:#f0f0f0;color:rgba(0,0,0,.88);border-radius:4px}
+body.pat .me{background:#e6f4ff;color:#1677ff;border-color:#91caff}
+body.pat .menu-btn{display:none}
+body.pat .page{padding:20px 24px 32px;max-width:none}
+body.pat .pop{border:0;border-radius:8px;box-shadow:var(--pop);background:#fff}
+body.pat .pop-item{border-radius:4px;font-size:14px}
+body.pat .pop-item:hover{background:rgba(0,0,0,.04)}
+body.pat .pop h4{font-size:12px;color:rgba(0,0,0,.45)}
+
+/* ---------- typography + page chrome ---------- */
+body.pat .ph h1{font-size:20px;font-weight:600;letter-spacing:0}
+body.pat .ph p,body.pat .note{font-size:14px;color:rgba(0,0,0,.45)}
+body.pat .crumbs ol,body.pat .crumbs a,body.pat .crumbs li{font-size:14px;color:rgba(0,0,0,.45)}
+body.pat .crumbs a:hover{color:rgba(0,0,0,.88)}
+body.pat .crumbs [aria-current="page"],body.pat .crumbs span.t{color:rgba(0,0,0,.88)}
+body.pat .back{border-color:#d9d9d9;color:rgba(0,0,0,.65)}
+body.pat .card,body.pat .nextup{background:#fff;border:0;border-radius:8px;box-shadow:none}
+body.pat .nextup{border-left:4px solid #1677ff}
+body.pat .card-h h2,body.pat .card-h h3,body.pat .gc-h h2,body.pat .lhead h3{font-size:16px;font-weight:600;color:rgba(0,0,0,.88)}
+body.pat .card-h p,body.pat .lhead p,body.pat .eyebrow{color:rgba(0,0,0,.45);font-size:14px}
+body.pat .kpi .v{font-weight:600}
+body.pat .kpi .ib{border-radius:8px}
+body.pat details.info,body.pat details.info.v3{background:#e6f4ff;border:1px solid #91caff;border-left-width:1px;border-radius:8px}
+body.pat details.info h2,body.pat details.info.v3 h2{color:rgba(0,0,0,.88);font-weight:500;font-size:14px}
+body.pat details.info .stp,body.pat details.info .st2{background:#fff;color:#1677ff;border-color:#91caff}
+
+/* ---------- buttons ---------- */
+body.pat .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 15px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;color:rgba(0,0,0,.88);font-size:14px;font-weight:400;line-height:1;white-space:nowrap;transition:all .15s}
+body.pat .btn:hover{border-color:#4096ff;color:#4096ff;background:#fff}
+body.pat .btn-p{background:#1677ff;border-color:#1677ff;color:#fff}
+body.pat .btn-p:hover{background:#4096ff;border-color:#4096ff;color:#fff}
+body.pat .btn-sm,body.pat .btn-xs{height:28px;padding:0 11px;font-size:14px;border-radius:6px}
+body.pat .btn-lg{height:32px;padding:0 15px;font-size:14px}
+body.pat .bar-in .btn,body.pat .bar-in .btn-lg{height:32px}
+body.pat .btn-t{border-color:transparent;background:none;color:#1677ff}
+body.pat .btn-t:hover{background:rgba(0,0,0,.04);border-color:transparent;color:#4096ff}
+body.pat .btn-d{color:#ff4d4f;border-color:#ff4d4f;background:#fff}
+body.pat .btn-d:hover{background:#fff2f0;border-color:#ff7875;color:#ff7875}
+body.pat .btn[disabled],body.pat .btn:disabled{background:#f5f5f5;border-color:#d9d9d9;color:rgba(0,0,0,.25);cursor:not-allowed}
+body.pat .btn-on{background:#e6f4ff;border-color:#91caff;color:#1677ff}
+body.pat .btn-ok{background:#52c41a;border-color:#52c41a;color:#fff}
+body.pat .icon-btn{border-radius:6px;color:rgba(0,0,0,.65)}
+body.pat .icon-btn:hover{background:rgba(0,0,0,.05);border-color:transparent}
+
+/* ---------- inputs ---------- */
+body.pat .in,body.pat select.in,body.pat .in.fsel{height:32px;border:1px solid #d9d9d9;border-radius:6px;padding:0 11px;font-size:14px;color:rgba(0,0,0,.88);background:#fff;outline:0}
+body.pat textarea.in{height:auto;padding:5px 11px}
+body.pat .in:hover{border-color:#4096ff}
+body.pat .in:focus{border-color:#1677ff;box-shadow:0 0 0 2px rgba(5,145,255,.1)}
+body.pat select.in,body.pat select.xin{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23bfbfbf' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+body.pat select.xin{background-position:right 2px center;padding-right:18px}
+body.pat .hsearch input{height:32px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;font-size:14px}
+body.pat .hsearch input:focus{border-color:#1677ff;box-shadow:0 0 0 2px rgba(5,145,255,.1);outline:0}
+body.pat .fld label,body.pat .fld>label{font-size:14px;font-weight:400}
+body.pat .req{color:#ff4d4f}
+
+/* ---------- tags / pills ---------- */
+body.pat .pill,body.pat .chip{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 7px;border:1px solid #d9d9d9;border-radius:4px;background:#fafafa;font-size:12px;font-weight:400;line-height:20px;color:rgba(0,0,0,.88);white-space:nowrap}
+body.pat .p-info,body.pat .chip.a{background:#e6f4ff;border-color:#91caff;color:#1677ff}
+body.pat .p-good,body.pat .chip.g{background:#f6ffed;border-color:#b7eb8f;color:#52c41a}
+body.pat .p-warn,body.pat .chip.w{background:#fff7e6;border-color:#ffd591;color:#fa8c16}
+body.pat .p-bad,body.pat .chip.b{background:#fff2f0;border-color:#ffccc7;color:#ff4d4f}
+body.pat .p-none{background:#fafafa;border-color:#d9d9d9;color:rgba(0,0,0,.65)}
+body.pat .tag{background:#f0f0f0;color:rgba(0,0,0,.65);border-radius:4px;font-size:12px;font-weight:500}
+body.pat .mchip{border-radius:4px;height:22px;font-size:12px}
+
+/* ---------- tabs ---------- */
+body.pat .tbar,body.pat .tbar2{padding:0;border-bottom:1px solid #f0f0f0;margin-bottom:16px}
+body.pat .tabs,body.pat .gtabs{gap:32px;border:0;padding:0;overflow:visible}
+body.pat .tabs button,body.pat .gtabs .gt{background:none;border:0;padding:12px 0;font-size:14px;color:rgba(0,0,0,.88);position:relative;margin-bottom:-1px;border-radius:0;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+body.pat .tabs button:hover,body.pat .gtabs .gt:hover{color:#4096ff}
+body.pat .tabs button[aria-selected="true"],body.pat .gtabs .gt[aria-selected="true"]{color:#1677ff;border-bottom:0}
+body.pat .tabs button[aria-selected="true"]::after,body.pat .gtabs .gt[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#1677ff}
+body.pat .tabs button span,body.pat .gt .cnt{font-style:normal;font-size:12px;background:#f0f0f0;border:0;border-radius:10px;padding:0 7px;color:rgba(0,0,0,.65)}
+body.pat .gt .cnt.ok{background:#f6ffed;color:#52c41a}
+body.pat .seg{display:inline-flex}
+body.pat .seg button{height:28px;padding:0 14px;border:1px solid #d9d9d9;background:#fff;font-size:14px;margin-left:-1px;border-radius:0}
+body.pat .seg button:first-child{border-radius:6px 0 0 6px;margin-left:0}
+body.pat .seg button:last-child{border-radius:0 6px 6px 0}
+body.pat .seg button[aria-selected="true"]{background:#fff;border-color:#1677ff;color:#1677ff;z-index:1}
+body.pat .seg button b{background:#f0f0f0;border:0;color:rgba(0,0,0,.65)}
+body.pat .seg.tri button[aria-selected="true"]{background:#1677ff;color:#fff;border-color:#1677ff}
+/* variants as PAT variant chips */
+body.pat .vseg{display:inline-flex;flex-wrap:wrap;gap:8px}
+body.pat .vseg .vs{height:32px;min-width:120px;padding:0 14px;border:0;border-radius:2px;background:#f5f5f5;color:rgba(0,0,0,.88);font-size:13px;display:inline-flex;align-items:center;gap:6px;justify-content:flex-start}
+body.pat .vseg .vs:hover{background:#ebebeb}
+body.pat .vseg .vs[aria-selected="true"]{background:#1677ff;color:#fff}
+body.pat .vs span{background:rgba(0,0,0,.06);border:0;border-radius:9px;padding:0 6px;font-size:11.5px}
+body.pat .vs[aria-selected="true"] span{background:rgba(255,255,255,.25);color:#fff}
+body.pat .vseg .vs .ok{color:inherit}
+
+/* ---------- steps (existing stepper, antd look) ---------- */
+body.pat .stepper{background:#fff;border:0;border-radius:8px;box-shadow:none;padding:18px 24px}
+body.pat .stepper .st .n{width:32px;height:32px;border:1px solid rgba(0,0,0,.25);background:#fff;color:rgba(0,0,0,.25);font-size:16px;font-weight:400}
+body.pat .stepper li.done .st .n{border-color:#1677ff;background:#e6f4ff;color:#1677ff}
+body.pat .stepper li.cur .st .n{background:#1677ff;border-color:#1677ff;color:#fff;box-shadow:none}
+body.pat .stepper li.err .st .n{border-color:#ff4d4f;color:#ff4d4f;background:#fff}
+body.pat .stepper .st .l b{font-weight:400;color:rgba(0,0,0,.45);font-size:15px}
+body.pat .stepper li.done .st .l b,body.pat .stepper li.cur .st .l b{color:rgba(0,0,0,.88)}
+body.pat .stepper li.cur .st .l b{font-weight:600}
+body.pat .stepper .st .l span{color:rgba(0,0,0,.45);font-size:12px}
+body.pat .stepper li:not(:last-child)::after{background:#f0f0f0;height:1px;top:16px}
+body.pat .stepper li.done:not(:last-child)::after{background:#1677ff}
+
+/* ---------- alerts ---------- */
+body.pat .alert{display:flex;gap:10px;align-items:flex-start;padding:8px 16px;border-radius:8px;border:1px solid #91caff;background:#e6f4ff;margin-bottom:16px;font-size:14px;color:rgba(0,0,0,.88)}
+body.pat .alert svg{margin-top:3px;flex:none;color:#1677ff}
+body.pat .a-warn{background:#fffbe6;border-color:#ffe58f}
+body.pat .a-warn svg{color:#faad14}
+body.pat .a-bad{background:#fff2f0;border-color:#ffccc7}
+body.pat .a-bad svg{color:#ff4d4f}
+body.pat .a-ok{background:#f6ffed;border-color:#b7eb8f}
+body.pat .a-ok svg{color:#52c41a}
+body.pat .a-info{background:#e6f4ff;border-color:#91caff;color:rgba(0,0,0,.88)}
+body.pat .alert .ax{margin-left:auto;align-self:center;padding:0}
+body.pat .smart{background:#f9f0ff;border:1px solid #d3adf7;border-radius:8px;padding:8px 16px}
+body.pat .smart .sico{background:#722ed1;border-radius:50%}
+body.pat .fnote{border-radius:6px;font-size:13px}
+body.pat .fnote.bad{background:#fff2f0;border:1px solid #ffccc7;color:rgba(0,0,0,.88)}
+body.pat .fnote.warn{background:#fffbe6;border:1px solid #ffe58f}
+body.pat .pf li{border-radius:4px;font-size:12px}
+body.pat .pf li.ok{background:#f6ffed;border-color:#b7eb8f;color:#389e0d}
+body.pat .pf li.warn{background:#fff7e6;border-color:#ffd591;color:#d46b08}
+body.pat .pf li.bad{background:#fff2f0;border-color:#ffccc7;color:#cf1322}
+
+/* ---------- lists + tables ---------- */
+body.pat .tr.hd{background:#fafafa;color:rgba(0,0,0,.88);font-weight:600;font-size:14px;border-bottom:1px solid #f0f0f0}
+body.pat .tr{border-color:#f0f0f0}
+body.pat .tr.rw:hover{background:#fafafa}
+body.pat .pn{font-weight:500;font-size:14px}
+body.pat .pi{font-size:12px;color:rgba(0,0,0,.45)}
+body.pat .trk i{background:#f0f0f0}
+body.pat .trk i.d,body.pat .trk i.c b{background:#1677ff}
+body.pat .trk i.c{background:#bae0ff}
+body.pat .trk i.f{background:#ff4d4f}
+body.pat .pager{border-top:1px solid #f0f0f0}
+body.pat .pgbtns .btn{min-width:32px;padding:0 6px}
+body.pat .xt th,body.pat .xt td{font-size:14px;border-color:#f0f0f0}
+body.pat .xt thead th{background:#fafafa;color:rgba(0,0,0,.88);font-weight:600;text-transform:none}
+body.pat .xt tr.xg th.gp{background:#f9f0ff;color:#722ed1}
+body.pat .xt tr.xg th.gt2{background:#e6f4ff;color:#1677ff}
+body.pat .xt td:has(.xin):focus-within{outline-color:#1677ff}
+body.pat .xwrap,body.pat .pscroll{border-top:1px solid #f0f0f0}
+body.pat .xtools3,body.pat .xbulk{background:#fafafa;border-color:#f0f0f0}
+body.pat .xbulk{background:#e6f4ff;color:#0958d9;border-color:#91caff}
+body.pat .grow,body.pat .lrow{border-top:1px solid #f0f0f0}
+body.pat .gname{font-size:15px;font-weight:600}
+body.pat .lrow .q,body.pat .lrow .q.lg{font-size:15px;font-weight:500;color:rgba(0,0,0,.88)}
+body.pat .lrow .t1 b{font-size:12.5px;color:rgba(0,0,0,.45);font-weight:400}
+body.pat .lrow.res{background:#fafafa}
+body.pat .stat4 div,body.pat .mx div{border-color:#f0f0f0}
+body.pat .feed li{border-color:#f0f0f0}
+
+/* ---------- review workbench (existing structure) ---------- */
+body.pat .rail{border-radius:8px}
+body.pat .ri[aria-current="true"]{background:#e6f4ff;color:#1677ff}
+body.pat .wb{border:1px solid #d9d9d9;border-radius:8px}
+body.pat .wbh{background:#fafafa;border-color:#d9d9d9}
+body.pat .wbl{color:rgba(0,0,0,.45);font-weight:500}
+body.pat .wbq{background:#fafafa;border-color:#f0f0f0}
+body.pat .wbq blockquote{font-size:15px;font-weight:500;color:rgba(0,0,0,.88)}
+body.pat .wbq .lnk,body.pat .lnk{color:#1677ff}
+body.pat .wbe{border-color:#f0f0f0}
+body.pat .wbq.foc{background:#e6f4ff;box-shadow:inset 3px 0 0 #1677ff}
+body.pat .wbe.foc{box-shadow:inset 0 0 0 2px #91caff}
+body.pat .wbn{background:#e6f4ff;color:#1677ff}
+body.pat .acell{border:1px solid #d9d9d9;border-radius:6px;background:#fff}
+body.pat .acell.miss{border-color:#ff4d4f;background:#fff2f0}
+body.pat .applyall i{border-radius:4px;border-color:#d9d9d9}
+body.pat .applyall.on i{background:#1677ff;border-color:#1677ff}
+body.pat .sg{border-radius:6px}
+body.pat .ied{border:1px solid #f0f0f0;border-radius:8px;background:#fafafa}
+body.pat .rvstrip{border-radius:8px;border-color:#f0f0f0}
+body.pat .rvbar i{background:#1677ff}
+body.pat .arow2{border-color:#f0f0f0}
+body.pat .sugbox{background:#e6f4ff;border:1px solid #91caff;border-radius:8px}
+body.pat .sugbox svg{color:#1677ff}
+body.pat .focusq{background:#fafafa;border:1px solid #f0f0f0;border-radius:6px}
+body.pat .opt{border:1px solid #d9d9d9;border-radius:6px}
+
+/* ---------- upload / forms ---------- */
+body.pat .drop,body.pat .bigdrop{border:1px dashed #d9d9d9;border-radius:8px;background:#fafafa}
+body.pat .drop:hover,body.pat .drop.over{border-color:#1677ff;background:#fafafa}
+body.pat .drop .ring{background:#e6f4ff;color:#1677ff}
+body.pat .ifile{border:1px solid #f0f0f0;border-radius:8px}
+
+/* ---------- parsing + progress ---------- */
+body.pat .bar,body.pat .bar i{border-radius:3px}
+body.pat .bar{background:#f5f5f5}
+body.pat .bar i{background:#1677ff}
+body.pat .phs li.ok .pd{background:#1677ff;border-color:#1677ff}
+body.pat .phs li.on .pd{border-top-color:#1677ff}
+body.pat .scan{background:linear-gradient(180deg,transparent,rgba(22,119,255,.25))}
+body.pat .hero .ring.g{background:#f6ffed;color:#52c41a;border-color:#b7eb8f}
+body.pat .hero .ring.w{background:#fffbe6;color:#faad14;border-color:#ffe58f}
+body.pat .hero .ring.b{background:#fff2f0;color:#ff4d4f;border-color:#ffccc7}
+body.pat .nextup .eyebrow{color:#1677ff}
+
+/* ---------- action bar, overlays, toasts ---------- */
+body.pat .bar-act{background:#fff;border-top:1px solid #f0f0f0;backdrop-filter:none}
+body.pat .bar-in .m b{font-size:14px;font-weight:600}
+body.pat .bar-in .m span{color:rgba(0,0,0,.45);font-size:13px}
+body.pat .probw>.btn{background:#fffbe6;border-color:#ffe58f;color:#ad6800}
+body.pat #probs,body.pat .xcols,body.pat .bell-pop{border-radius:8px;box-shadow:var(--pop);border:0}
+body.pat .scrim{background:rgba(0,0,0,.45)}
+body.pat .modal,body.pat .drawer{border:0;border-radius:8px;box-shadow:var(--pop)}
+body.pat .ov-h{padding:16px 24px 8px}
+body.pat .ov-h h3{font-size:16px;font-weight:600}
+body.pat .ov-h p{color:rgba(0,0,0,.45);font-size:14px}
+body.pat .ov-f{background:#fff;border-top:0;border-radius:0 0 8px 8px;padding:10px 24px 20px}
+body.pat #toasts{top:24px;bottom:auto;align-items:center;width:auto;max-width:90vw}
+body.pat .toast{background:#fff;color:rgba(0,0,0,.88);border-radius:8px;box-shadow:var(--pop);padding:9px 16px;font-size:14px;gap:10px}
+body.pat .toast.err{background:#fff2f0;color:#cf1322;border:1px solid #ffccc7}
+body.pat .toast button{background:none;border:0;color:#1677ff;font-size:14px;padding:0 4px}
+body.pat #docdrawer{border-left:0;box-shadow:var(--pop)}
+body.pat .dd-tabs button[aria-selected="true"]{color:#1677ff;border-bottom-color:#1677ff}
+body.pat #tray{border-radius:8px;border:0;box-shadow:var(--pop)}
+body.pat .tray-i i b{background:#1677ff}
+body.pat .dot.num{background:#ff4d4f}
+
+@media (max-width:900px){
+  body.pat .sb{width:240px}
+  body.pat .co-btn{min-width:0}
+  body.pat .cmdk-btn,body.pat .saved{display:none}
+}

@@ -57,9 +57,9 @@ function wRows(){
  if(!rows.length)return `<div class="empty-t"><h3>${W.hq.trim()?`No results for \u201c${esc(W.hq.trim())}\u201d`:'Nothing here yet'}</h3><p>${W.hq.trim()||W.tab!=='all'?'Try a different search or view.':''}</p>${W.hq.trim()||W.tab!=='all'?`<button class="btn btn-sm" data-act="w_clearF">Clear filters</button>`:''}</div>`;
  return rows.map(p=>{
   const c=wCta(p),pend=wPending(p).length;
-  const v4=VER==='v4';
+  const v4=IDEAL();
   return `<div class="tr w2 rw${v4?' v4':''}" data-act="w_open" data-id="${p.id}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${WST[p.status].l}">
-   ${v4?`<label class="rsel" data-act="noop"><input type="checkbox" data-wc="rowPick" data-id="${p.id}" ${(W.rsel||[]).includes(p.id)?'checked':''} aria-label="Select ${esc(p.name)}"></label>`:''}<div style="min-width:0"><div class="pn">${esc(p.name)}${p.version>1?` <span class="chip a" style="margin-left:6px">v${p.version}</span>`:''}${pend?` <span class="chip w" style="margin-left:4px">${pend} to review</span>`:''}</div><div class="pi" title="${esc(p.file)}">${p.ref} · ${wAgo(p.updatedAt)}${p.masterId?'':' · master policy needed'}</div></div>
+   ${v4?`<label class="rsel" data-act="noop"><input type="checkbox" data-wc="rowPick" data-id="${p.id}" ${(W.rsel||[]).includes(p.id)?'checked':''} aria-label="Select ${esc(p.name)}"></label>`:''}<div style="min-width:0"><div class="pn">${esc(p.name)}${p.version>1?` <span class="chip a" style="margin-left:6px">v${p.version}</span>`:''}${pend?` <span class="chip w" style="margin-left:4px">${pend} to review</span>`:''}${V3X()?wAgeChip(p):''}</div><div class="pi" title="${esc(p.file)}">${p.ref} · ${wAgo(p.updatedAt)}${V3X()?` · ${wOwnerTxt(p)}`:''}${p.masterId?'':' · master policy needed'}</div></div>
    <div>${wspill(p.status)}</div><div class="hs">${wTrack(p)}</div>
    <div class="tdt"><b>${wDay(p.updatedAt)} ${new Date(p.updatedAt).getFullYear()}</b><span>${wTime(p.updatedAt)}</span></div>
    <div class="ac">${p.status==='draft'?`<button class="icon-btn" data-act="w_discard" data-id="${p.id}" aria-label="Discard draft ${esc(p.name)}" title="Discard draft">${ic('x',18)}</button>`:''}<button class="btn btn-sm cta-s" tabindex="-1" title="${esc(c.t||c.l)}">${c.l}</button></div></div>`;
@@ -81,9 +81,9 @@ function wHistory(full){
  const tab=(k,l)=>`<button role="tab" aria-selected="${W.tab===k}" data-act="w_tab" data-t="${k}">${l}<span>${cnt(k)}</span></button>`;
  return `<section class="card"><div class="card-h"><div><h2>Proposals</h2></div></div>
   <div class="tbar"><div class="tabs" role="tablist">${tab('all','All')}${tab('prog','In progress')}${full?`${tab('att','Needs attention')}${tab('ready','Ready to package')}${tab('done','Packaged')}`:''}</div>
-   <div class="hsearch">${ic('search',16)}<input id="whq" type="search" value="${esc(W.hq)}" placeholder="Search by name or ID" aria-label="Search proposals">${VER==='v4'?'<kbd class="slash">/</kbd>':''}</div>${VER==='v4'?`<button class="btn btn-xs dens" data-act="w_dens" title="Row density">${ic('list',14)}${W.dens==='comfortable'?'Comfortable':'Compact'}</button>`:''}</div>
-  ${VER==='v4'?`<div id="wbulk" class="xbulk bulk">${typeof wBulk==='function'?wBulk():''}</div>`:''}
-  <div class="tr w2 hd${VER==='v4'?' v4':''}">${VER==='v4'?`<label class="rsel" data-act="noop"><input type="checkbox" data-wc="rowPickAll" aria-label="Select all"></label>`:''}<span>Proposal</span><span>Status</span><span class="hs">Progress</span><span>Updated</span><span></span></div>
+   <div class="hsearch">${ic('search',16)}<input id="whq" type="search" value="${esc(W.hq)}" placeholder="Search by name or ID" aria-label="Search proposals">${IDEAL()?'<kbd class="slash">/</kbd>':''}</div>${IDEAL()?`<button class="btn btn-xs dens" data-act="w_dens" title="Row density">${ic('list',14)}${W.dens==='comfortable'?'Comfortable':'Compact'}</button>`:''}</div>
+  ${IDEAL()?`<div id="wbulk" class="xbulk bulk">${typeof wBulk==='function'?wBulk():''}</div>`:''}
+  <div class="tr w2 hd${IDEAL()?' v4':''}">${IDEAL()?`<label class="rsel" data-act="noop"><input type="checkbox" data-wc="rowPickAll" aria-label="Select all"></label>`:''}<span>Proposal</span><span>Status</span><span class="hs">Progress</span><span>Updated</span><span></span></div>
   <div id="wrows" class="rowsbox">${wRows()}</div><div id="wpager" class="pager">${wPager()}</div></section>`;
 }
 function wActivityCard(n){
@@ -92,7 +92,7 @@ function wActivityCard(n){
   <ul class="feed">${items.map(a=>`<li><b>${esc(a.label)}</b><span>${esc(a.detail)}</span><em>${esc(a.user)} · ${wAgo(a.at)}</em></li>`).join('')}</ul></section>`;
 }
 function wOverview(){
- if(VER==='v4')return wQueue();
+ if(IDEAL())return wQueue();
  const P=wProps(),c=wCounts(P);
  const k=(ico,tone,v,l,s)=>`<div class="card kpi"><span class="ib ${tone}">${ic(ico,22)}</span><div><div class="v">${v}</div><div class="k">${l}</div><div class="s">${s}</div></div></div>`;
  const pk=W.packages.filter(x=>x.partnerId===S.co.id);
@@ -135,8 +135,8 @@ function wProposalPage(p){
  const prefill=st==='templates'&&p.status!=='packaged'?`<button class="btn btn-sm crumb-act" data-act="w_prefill" title="Fill every gap with demo values and confirm all templates">${ic('spark',15)}Prefill data</button>`:'';
  return `<div class="crumbs"><button class="back" data-act="w_back" aria-label="Go back">${ic('left',17)}</button><nav aria-label="Breadcrumb"><ol>
   <li><a href="#" data-act="w_nav" data-v="proposals">Proposals</a>${ic('right',14)}</li><li><span class="t">${esc(p.name)}</span>${ic('right',14)}</li><li aria-current="page">${WSTAGE_L[st]}</li></ol></nav>${prefill}</div>
-  <div class="ph"><div><h1>${esc(p.name)}</h1><p><span class="chip">${p.ref}</span> ${p.version>1?`<span class="chip a">v${p.version}</span> `:''}<span class="chip">${ic('file',12)}${esc(p.file)}</span> <span class="chip">${ic('shield',12)}${esc(p.master||'No master policy')}</span></p></div>
-   <div class="r">${wspill(p.status)}${['draft','parsing','failed'].includes(p.status)?'':`<button class="btn" data-act="w_doc" aria-pressed="${!!W.docOpen}">${ic('file',16)}Proposal document</button><button class="btn btn-t" data-act="w_revise" ${blk?`title="Can't take a new version: ${esc(blk)}"`:''}>${ic('branch',16)}Revised PF</button>`}</div></div>
+  <div class="ph"><div><h1>${esc(p.name)}</h1>${V3X()?`<p class="meta3">${p.ref} · ${p.version>1?`v${p.version} · `:''}${esc(p.file)} · ${esc((p.master||'No master policy').replace(/ · Master policy$/,''))}</p>`:`<p><span class="chip">${p.ref}</span> ${p.version>1?`<span class="chip a">v${p.version}</span> `:''}<span class="chip">${ic('file',12)}${esc(p.file)}</span> <span class="chip">${ic('shield',12)}${esc(p.master||'No master policy')}</span></p>`}</div>
+   <div class="r">${V3X()?wOwnerSel(p):''}${wspill(p.status)}${['draft','parsing','failed'].includes(p.status)?'':`<button class="btn" data-act="w_doc" aria-pressed="${!!W.docOpen}">${ic('file',16)}Proposal document</button><button class="btn btn-t" data-act="w_revise" ${blk?`title="Can't take a new version: ${esc(blk)}"`:''}>${ic('branch',16)}Revised PF</button>`}</div></div>
   ${wStepper(p)}${body}`;
 }
 

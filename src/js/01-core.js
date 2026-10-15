@@ -169,8 +169,8 @@ const S={view:'overview',pid:null,co:COMPANIES[0],menu:null,gm:null,lm:null,sb:f
 try{S.col=localStorage.getItem('sbc')==='1'}catch(e){}
 S.intake=false;S.from='overview';
 /* Two versions are shipped: internal v3 is shown as V1 (smart review), v4 as V2 (idealistic). */
-const VLAB={v3:'V1',v4:'V2'};
-let VER='v3';try{VER=['v3','v4'].includes(localStorage.getItem('ver'))?localStorage.getItem('ver'):'v3'}catch(e){}
+const VLAB={v3:'V1',v4:'V2',v5:'V3'};
+let VER='v3';try{VER=['v3','v4','v5'].includes(localStorage.getItem('ver'))?localStorage.getItem('ver'):'v3'}catch(e){}
 let ptimer=null,pendingConfirm=null,lastFocus=null;
 const cur=()=>S.props.find(p=>p.id===S.pid);
 

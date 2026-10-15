@@ -17,7 +17,7 @@ function renderBar(){
  else if(S.view==='proposal'){const p=cur();if(p.status!=='parsing'&&p.status!=='failed'){if(p.step===1)h=barGroups(p);else if(p.step===2)h=barVars(p);else if(p.step===3)h=barReview(p)}}
  if(h){b.style.display='';b.innerHTML=h;document.body.classList.add('hasbar')}else{b.style.display='none';b.innerHTML='';document.body.classList.remove('hasbar')}
 }
-function render(top){document.body.dataset.ver=VER;if(S.intake&&((VER!=='v1'?W.view:S.view)!=='new')){S.intake=false;W.intake=null}renderSb();renderTop();renderPage();renderBar();renderTour();if(top)window.scrollTo({top:0})}
+function render(top){document.body.dataset.ver=VER;document.body.classList.toggle('pat',typeof PAT==='function'&&PAT());if(S.intake&&((VER!=='v1'?W.view:S.view)!=='new')){S.intake=false;W.intake=null}renderSb();renderTop();renderPage();renderBar();renderTour();if(top)window.scrollTo({top:0})}
 
 /* ================= overlays ================= */
 function openOv(kind,{title,sub,body,foot,wide,mount}){

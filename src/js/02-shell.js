@@ -26,9 +26,9 @@ function crumbs(){
 }
 function verMenu(){
  const open=S.menu==='ver';
- const opt=(v,t,d)=>`<button class="pop-item vopt" role="menuitemradio" aria-checked="${VER===v}" data-act="pickVer" data-v="${v}"><span class="vb">${VLAB[v]}</span><span class="t"><b>${t}</b><span>${d}</span></span>${VER===v?`<span class="ck">${ic('check',18,2.5)}</span>`:''}</button>`;
+ const opt=(v,t,d)=>`<button class="pop-item vopt" role="menuitemradio" aria-checked="${VER===v}" data-act="pickVer" data-v="${v}"><span class="vb">${VLAB[v]}</span><span class="t"><b>${t}${v==='v3'?'<em class="devtag">Dev ready</em>':''}</b><span>${d}</span></span>${VER===v?`<span class="ck">${ic('check',18,2.5)}</span>`:''}</button>`;
  return `<div class="ver"><button class="ver-btn" data-act="toggleVer" aria-haspopup="true" aria-expanded="${open}" aria-label="Prototype version: ${VLAB[VER]}"><span>Version</span><b class="vb">${VLAB[VER]}</b>${ic('down',14)}</button>
-  ${open?`<div class="pop ver-pop" role="menu"><h4>Prototype version</h4>${opt('v3','Smart review','Groups, left-overs, templates with auto-matched terms, plans and packages')}${opt('v4','Idealistic','Everything in V1 plus a work queue, keyboard shortcuts, command palette, side-by-side source, autosave and a faster data grid')}</div>`:''}</div>`;
+  ${open?`<div class="pop ver-pop" role="menu"><h4>Prototype version</h4>${opt('v3','Smart review','Groups, left-overs, templates with auto-matched terms, plans and packages')}${opt('v5','Production-grade','Everything in V2 plus notifications, background upload tray, pre-flight checks, problems list, approvals, ownership, comments and a stronger data grid')}${opt('v4','Idealistic','Everything in V1 plus a work queue, keyboard shortcuts, command palette, side-by-side source, autosave and a faster data grid')}</div>`:''}</div>`;
 }
 function meMenu(){
  const open=S.menu==='me';
@@ -39,8 +39,8 @@ function renderTop(){
  const c=S.co;
  $('#top').innerHTML=`
   <button class="icon-btn menu-btn" data-act="toggleSb" aria-label="Open navigation">${ic('menu',20)}</button>
-  ${VER==='v4'?`<button class="cmdk-btn" data-act="cmdk">${ic('search',16)}<span>Search or jump to</span><kbd>⌘K</kbd></button><span class="saved" id="savedind">${ic('check',13,2.5)}<span id="savedtx">${wSavedText()}</span></span>`:''}
-  <div class="top-r">${verMenu()}
+  ${IDEAL()?`<button class="cmdk-btn" data-act="cmdk">${ic('search',16)}<span>Search or jump to</span><kbd>⌘K</kbd></button><span class="saved" id="savedind">${ic('check',13,2.5)}<span id="savedtx">${wSavedText()}</span></span>`:''}
+  <div class="top-r">${verMenu()}${typeof patSw==='function'?patSw():''}
    <div class="co">
     <button class="co-btn" data-act="toggleCo" aria-haspopup="true" aria-expanded="${S.menu==='co'}">
      <span class="av" style="background:${c.color}">${c.short.slice(0,2).toUpperCase()}</span>
@@ -51,7 +51,7 @@ function renderTop(){
      <dl class="co-detail"><dt>Industry</dt><dd>${c.industry}</dd><dt>Employees covered</dt><dd>${c.emp}</dd><dt>Next renewal</dt><dd>${c.renewal}</dd><dt>Account manager</dt><dd>${c.am}</dd></dl></div>`:''}
    </div>
    <button class="icon-btn" data-act="${SMART()?'startTourW':'demo'}" aria-label="${SMART()?'Take the tour':'Help'}" title="${SMART()?'Take the tour':'Help'}">${ic('help',20)}</button>
-   <button class="icon-btn" data-act="demo" aria-label="Notifications">${ic('bell',20)}<span class="dot"></span></button>
+   ${V3X()?wBell():`<button class="icon-btn" data-act="demo" aria-label="Notifications">${ic('bell',20)}<span class="dot"></span></button>`}
    ${meMenu()}
   </div>`;
 }

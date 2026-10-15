@@ -1,6 +1,8 @@
 /* ================= events ================= */
 document.addEventListener('click',e=>{
- if(S.menu&&!e.target.closest('.co,.ver,.me-w')){S.menu=null;renderTop()}
+ if(S.menu&&!e.target.closest('.co,.ver,.me-w,.bell-w')){S.menu=null;renderTop()}
+ if(W.probOpen&&!e.target.closest('#probs,[data-act="toggleProbs"]')){W.probOpen=false;renderBar()}
+ if(W.ui&&W.ui.colsOpen&&!e.target.closest('.xcolsw')){W.ui.colsOpen=false;renderPage()}
  if((S.gm||S.lm||W.gm)&&!e.target.closest('.kb')){S.gm=null;S.lm=null;W.gm=null;renderPage()}
  const t=e.target.closest('[data-act]');if(!t||t.disabled)return;
  if(t.tagName==='INPUT')return;
@@ -22,7 +24,7 @@ document.addEventListener('input',e=>{
  const t=e.target;const i=t.dataset&&t.dataset.inp;
  if(t.dataset&&t.dataset.wi&&WIN[t.dataset.wi]){WIN[t.dataset.wi](t);return}
  if(t.id==='wdq'){W.docQ=t.value;const pos=t.selectionStart;wDocDrawer();const n=$id('wdq');if(n){n.focus();n.setSelectionRange(pos,pos)}return}
- if(t.id==='whq'){W.hq=t.value;W.pg=1;$id('wrows').innerHTML=wRows();$id('wpager').innerHTML=wPager();return}
+  if(t.id==='whq'){W.hq=t.value;W.pg=1;$id('wrows').innerHTML=wRows();$id('wpager').innerHTML=wPager();return}
  if(i==='nfName')S.nf.name=t.value;
  if(i==='nfNew'){S.nf.newName=t.value;refreshNf()}
  if(t.id==='hq'){S.hq=t.value;$id('hrows').innerHTML=histRows()}

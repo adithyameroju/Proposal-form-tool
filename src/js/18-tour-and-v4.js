@@ -6,7 +6,7 @@
 /* ---------- autosave state ---------- */
 const wSavedText=()=>{const s=W.savedAt;if(!s)return 'All changes saved';const m=Math.floor((Date.now()-s)/60000);return m<1?'Saved just now':`Saved ${m} min ago`};
 function wSavedPaint(){const e=document.getElementById('savedtx');if(e)e.textContent=wSavedText()}
-setInterval(()=>{if(VER==='v4')wSavedPaint()},20000);
+setInterval(()=>{if(IDEAL())wSavedPaint()},20000);
 
 /* ---------- spotlight engine ---------- */
 const SPOT={on:false,steps:[],i:0,key:null,sample:false};
@@ -82,7 +82,7 @@ function wTourGo(stage){
  W.ui={tpl:null,comp:null,vid:null,planTab:null,open:null,pricing:'',tri:null};render(true);
 }
 function wTourSteps(){
- const v4=VER==='v4',S_=[];
+ const v4=IDEAL(),S_=[];
  S_.push({title:'Welcome to the review flow',text:'A one-minute walkthrough of how a proposal goes from PDF to plans. It uses a throw-away sample, so nothing here is saved.',run:()=>{W.view='overview';W.pid=null;W.hist=[];W.stage=null;render(true)}});
  if(v4)S_.push({sel:'.nextup',title:'Start with what needs you',text:'Your queue puts the most urgent proposal first. One button takes you straight to the next thing to do.',tip:'Press <kbd>Enter</kbd> on this page to open it.'});
  S_.push({sel:'#wrows',title:'One row per proposal',text:'Status, progress and last update at a glance. The short button on the right is always the next step.'});
@@ -101,7 +101,7 @@ function wTourSteps(){
  return S_;
 }
 function wSpotAISteps(){
- const v4=VER==='v4';
+ const v4=IDEAL();
  return [
   {sel:'.smart',title:'Meet smart review',text:'I read every term in this template and matched the ones I am confident about, so you only decide what needs you.',block:'start'},
   {sel:'.seg.tri',title:'Three ways to look',text:'Needs attention is your to-do list. Auto-matched lets you accept the confident terms in one go. All terms shows everything.'}
@@ -109,7 +109,7 @@ function wSpotAISteps(){
 }
 function wAfterHook(){
  document.body.dataset.dens=W.dens||'compact';
- if(VER==='v4'&&W.view==='proposal'){
+ if(IDEAL()&&W.view==='proposal'){
   const f=document.querySelector('.wbq.foc')||document.querySelector('.wb .wbq');const id=f&&f.dataset.cl;
   if(id&&W.docFocus!==id){W.docFocus=id;if(W.docOpen)wDocDrawer()}
  }
@@ -126,7 +126,7 @@ function wQueue(){
  const hero=nxt?(()=>{const c=wCta(nxt);return `<section class="nextup"><div class="nu-l"><span class="eyebrow">Next up</span><h2>${esc(nxt.name)}</h2><p>${esc(WST[nxt.status].l)}${wPending(nxt).length?` · ${wPending(nxt).length} to review`:''} · ${wAgo(nxt.updatedAt)}</p></div><div class="nu-r"><button class="btn btn-p btn-lg" data-act="w_open" data-id="${nxt.id}" data-nextup="1">${esc(c.t||c.l)}${ic('arrow',17)}</button><span class="kbhint"><kbd>↵</kbd> to open</span></div></section>`})()
   :`<section class="nextup done"><div class="nu-l"><span class="eyebrow">Next up</span><h2>You are all caught up</h2><p>Nothing needs you right now. Upload a proposal to start the next one.</p></div><div class="nu-r"><button class="btn btn-p btn-lg" data-act="w_intake">${ic('plus',17)}New proposal</button></div></section>`;
  return `<div class="ph"><h1>Your queue</h1><div class="phr"><button class="btn" data-act="startTourW">Take the tour</button><button class="btn btn-p btn-lg" data-act="w_intake">${ic('plus',18)}New proposal</button></div></div>
-  ${hero}<div class="histcol">${wHistory(true)}</div>`;
+  ${hero}${V3X()?wInsights():''}<div class="histcol">${wHistory(true)}</div>`;
 }
 function wBulk(){
  const n=(W.rsel||[]).filter(id=>W.proposals.some(p=>p.id===id)).length;
@@ -226,15 +226,15 @@ function wKeepFocus(run){
 (function(){
  const pf=WCH.planField,ps=WCH.planSel;
  WCH.planField=function(el){
-  if(VER!=='v4')return pf(el);
+  if(!IDEAL())return pf(el);
   const p=wcur(),x=p&&p.plans.find(q=>q.id===el.dataset.id);if(!x)return pf(el);
-  wGridPush({id:x.id,f:el.dataset.f,old:x[el.dataset.f],nw:el.value});
+  wGridPush({id:x.id,f:el.dataset.f,old:x[el.dataset.f],nw:el.value});x.touched={...(x.touched||{}),[el.dataset.f]:true};
   wKeepFocus(()=>pf(el));
  };
  WCH.planSel=function(el){
-  if(VER!=='v4')return ps(el);
+  if(!IDEAL())return ps(el);
   const p=wcur(),x=p&&p.plans.find(q=>q.id===el.dataset.id);if(!x)return ps(el);
-  wGridPush({id:x.id,k:el.dataset.k,old:x.selection[el.dataset.k],nw:el.value});
+  wGridPush({id:x.id,k:el.dataset.k,old:x.selection[el.dataset.k],nw:el.value});x.touched={...(x.touched||{}),[el.dataset.k]:true};
   wKeepFocus(()=>ps(el));
  };
  Object.assign(WCH,{
@@ -277,7 +277,7 @@ function wGridKey(e){
 
 /* ---------- V4: global keyboard ---------- */
 document.addEventListener('keydown',e=>{
- if(VER!=='v4'||SPOT.on)return;
+ if(!IDEAL()||SPOT.on)return;
  const el=e.target,typing=!!el&&(/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)||el.isContentEditable),mod=e.metaKey||e.ctrlKey;
  if(mod&&e.key.toLowerCase()==='k'){e.preventDefault();cmdkOpen();return}
  if(CMDK.on)return;
@@ -348,7 +348,7 @@ Object.assign(ACT,{
 const _w_comp=ACT.w_comp;
 ACT.w_comp=function(t){
  _w_comp(t);
- if(VER==='v4'){const p=wcur(),tp=p&&p.templates.find(x=>x.id===W.ui.tpl);if(tp){const c=wRvQueue(p,tp).find(x=>x.componentKey===W.ui.comp);if(c){W.ui.focusCl=c.id;renderPage()}}}
+ if(IDEAL()){const p=wcur(),tp=p&&p.templates.find(x=>x.id===W.ui.tpl);if(tp){const c=wRvQueue(p,tp).find(x=>x.componentKey===W.ui.comp);if(c){W.ui.focusCl=c.id;renderPage()}}}
 };
 document.addEventListener('input',e=>{
  if(e.target.id==='gtype'){const b=$id('gok');if(b)b.disabled=e.target.value.trim().toUpperCase()!=='GENERATE'}
